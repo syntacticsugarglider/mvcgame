@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "es6",
+        "target": "es5",
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "alwaysStrict": true,
+        "outDir": "./dist",
+        "plugins": [
+            {
+                "name": "typescript-tslint-plugin",
+            }
+        ]
+    },
+    "compileOnSave": true,
+}
