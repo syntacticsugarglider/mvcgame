@@ -28,7 +28,7 @@ export class PaperJS extends Render {
         switch (content.type) {
             case ContentType.Ship: {
                 var triangle = new Path.RegularPolygon(new Point(0, 0), 3, 40);
-                triangle.fillColor = new Color('white');
+                triangle.fillColor = new Color('#555');
                 let update = () => {
                     let pos = (content as Ship).position;
                     triangle.position = new Point(pos.x, pos.y);

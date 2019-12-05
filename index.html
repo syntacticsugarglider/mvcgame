@@ -8,6 +8,10 @@
 
 <body>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body,
         html,
         canvas {
@@ -16,20 +20,82 @@
 
         body {
             margin: 0;
-            background: black;
+            --background: black;
+            --background-accent: #111;
+            --fg: #777;
+            --bg-text: #eee;
+            --bg-text-accent: #aaa;
+            --fg-accent: #555;
+            --info-size: 0.75em;
+            background: var(--background);
+            user-select: none;
         }
 
         html {
+            font-family: 'Fira Mono', 'Source Code Pro', 'Courier New', Courier, monospace;
+            font-size: 15px;
             line-height: 1.15;
             -webkit-text-size-adjust: 100%;
         }
 
+        .container,
         canvas {
             width: 100%;
         }
+
+        canvas {
+            position: fixed;
+        }
+
+        .content {
+            color: var(--bg-text);
+        }
+
+        .bar.container {
+            position: fixed;
+            bottom: 25px;
+            margin: auto;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        .bar.content {
+            border: 1px solid var(--fg);
+            width: 100%;
+            max-width: 700px;
+            background: var(--background-accent);
+            height: 75px;
+            padding: 10px;
+            font-size: var(--info-size);
+            color: var(--bg-text-accent);
+            position: relative;
+        }
+
+        .bar.content::before {
+            content: '';
+            display: block;
+            border: 1px solid var(--fg-accent);
+            background: (--background);
+            width: 100%;
+            max-width: 700px;
+            left: 7px;
+            top: 5px;
+            position: absolute;
+            height: 75px;
+            z-index: -1;
+        }
     </style>
     <script src="bundle.js"></script>
-    <canvas resize></canvas>
+    <div class="container">
+        <canvas resize></canvas>
+        <div class="bar container">
+            <div class="bar content">v <span class="content" id="vel">0</span> <span id="vel_unit">m/s</span>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

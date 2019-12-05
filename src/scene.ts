@@ -26,10 +26,21 @@ export abstract class Content {
         this.handlers = new Map();
     }
     on(event: string, callback: () => void) {
-        this.handlers.set(event, callback);
+        let existing_callback = this.handlers.get(event);
+        if (existing_callback) {
+            this.handlers.set(event, () => {
+                existing_callback!();
+                callback();
+            })
+        } else {
+            this.handlers.set(event, callback);
+        }
     }
     call_handler(event: string) {
-        this.handlers.get(event)!();
+        let cb = this.handlers.get(event);
+        if (cb) {
+            cb!();
+        }
     }
 }
 
@@ -37,7 +48,7 @@ export class Ship extends Content {
     type = ContentType.Ship;
     private _heading: number;
     private _position: Point;
-    velocity: Vector;
+    private _velocity: Vector;
     set heading(heading: number) {
         this._heading = heading;
     }
@@ -45,8 +56,15 @@ export class Ship extends Content {
         this._position = position;
         super.call_handler('position');
     }
+    set velocity(velocity: Vector) {
+        this._velocity = velocity;
+        super.call_handler('velocity');
+    }
     get position(): Point {
         return this._position;
+    }
+    get velocity(): Vector {
+        return this._velocity;
     }
     constructor() {
         super();
