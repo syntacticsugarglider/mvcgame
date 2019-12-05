@@ -1,3 +1,7 @@
+import { Render } from './render/render';
+
 export class Game {
-    constructor() { }
+    constructor(render: Render) { }
+
+    update(delta: number): void { }
 }

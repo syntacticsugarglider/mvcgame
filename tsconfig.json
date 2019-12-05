@@ -5,6 +5,7 @@
         "noImplicitAny": true,
         "strictNullChecks": true,
         "removeComments": true,
+        "moduleResolution": "node",
         "preserveConstEnums": true,
         "sourceMap": true,
         "alwaysStrict": true,
