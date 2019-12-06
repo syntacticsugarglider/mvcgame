@@ -22,10 +22,13 @@
             margin: 0;
             --background: black;
             --background-accent: #111;
+            --background-accent-2: #333;
             --fg: #777;
             --bg-text: #eee;
             --bg-text-accent: #aaa;
             --fg-accent: #555;
+            --fg-text: #111;
+            --fg-accent-text: #444;
             --info-size: 0.75em;
             background: var(--background);
             user-select: none;
@@ -67,32 +70,165 @@
             width: 100%;
             max-width: 700px;
             background: var(--background-accent);
-            height: 75px;
             padding: 10px;
+            padding-left: 0;
+            padding-right: 0;
             font-size: var(--info-size);
             color: var(--bg-text-accent);
             position: relative;
         }
 
-        .bar.content::before {
+        .bar.content::after {
             content: '';
             display: block;
             border: 1px solid var(--fg-accent);
             background: (--background);
             width: 100%;
             max-width: 700px;
-            left: 7px;
+            left: 5px;
             top: 5px;
             position: absolute;
-            height: 75px;
+            height: 100%;
             z-index: -1;
+        }
+
+        .field {
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+
+        .column {
+            display: inline-block;
+        }
+
+        .progress {
+            position: relative;
+            border: 1px solid var(--fg-accent);
+            padding-left: 4px;
+            margin-top: 3px;
+            padding-right: 4px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+
+        .progress::after {
+            content: '';
+            display: block;
+            width: 30%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            opacity: 0.4;
+            right: 0;
+            background: var(--fg-accent);
+        }
+
+        .column {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .option {
+            display: inline-block;
+            box-sizing: content-box;
+            padding: 2px;
+            flex-grow: 1;
+            text-align: center;
+            border: 1px solid var(--fg-accent);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .option:not(:last-child) {
+            margin-right: 5px;
+        }
+
+        .option:hover {
+            border: 1px solid var(--bg-text);
+            color: var(--bg-text);
+        }
+
+        .active.option {
+            background: var(--background-accent-2);
+            color: var(--bg-text);
+        }
+
+        .select {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .column:not(:nth-child(2)) {
+            margin-left: -6px;
+        }
+
+        .tooltip.container {
+            position: absolute;
+            top: -100%;
+            height: 100%;
+            min-width: 50px;
+            min-height: 10px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-end;
+            padding-bottom: 10px;
+            line-height: 1.5;
+            max-width: 100%;
+        }
+
+        .tooltip.content {
+            padding: 10px;
+            color: var(--bg-text-accent);
+            background: var(--background-accent);
+            border: 1px solid var(--fg);
+            display: inline-block;
+            white-space: pre;
+            display: none;
+        }
+
+        .tooltip.content.active {
+            display: block;
         }
     </style>
     <script src="bundle.js"></script>
     <div class="container">
         <canvas resize></canvas>
         <div class="bar container">
-            <div class="bar content">v <span class="content" id="vel">0</span> <span id="vel_unit">m/s</span>
+            <div class="bar content">
+                <div class="tooltip container">
+                    <div class="tooltip content"></div>
+                </div>
+                <div class="column">
+                    <div class="field" tooltip="current magnitude of acceleration">acc <span class="n content"
+                            id="vel">0</span> <span id="vel_unit">m/s<sup>2</sup></span></div>
+                    <div class="field"><span tooltip="throttle percentage">thro <span class="n content"
+                                id="throttle">0</span>%</span>
+                        <span tooltip="total thrust of active engines">thr <span class="n content"
+                                id="throttle">0</span>
+                            <span id="thr_unit">N</span></span></div>
+                    <div class="progress field"
+                        tooltip="available reaction mass as percentage of full capacity, absolute mass\nused as fuel for ion engine">
+                        rmass <span class="n content" id="fuel_per">70</span>%: <span class="n content"
+                            id="fuel">20</span>
+                        <span id="fuel_unit">kg</span></div>
+                </div>
+                <div class="column">
+                    <div class="field" tooltip="select active engine">active engine</div>
+                    <div class="field drvmode">
+                        <div class="select">
+                            <div class="option" data-name="rel"
+                                tooltip="select active engine: relativistic alcubierre drive">alcu
+                            </div>
+                            <div class="option active" data-name="ion"
+                                tooltip="select active engine: conventional dual-stage gridded ion thruster\nincludes RCS thrusters used for precise maneuvering">
+                                ion</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

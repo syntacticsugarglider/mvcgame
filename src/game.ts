@@ -24,9 +24,7 @@ export class Game {
         this.scene.add(content);
         if (content.type == ContentType.Ship) {
             let ship = content as Ship;
-            let update_velocity = () => {
-                this.bar.velocity = ship.velocity;
-            };
+            let update_velocity = () => { };
             ship.on('velocity', update_velocity);
             ship.on('position', () => {
                 this.scene.center = ship.position;
