@@ -9,8 +9,9 @@ export class Game {
 
     constructor(render: Render) {
         this.updaters = [];
-        this.scene = render;
         this.bar = new Bar(document.querySelector(".bar.container")!);
+        this.scene = render;
+        this.scene.use_tooltip(this.bar.tooltip);
     }
 
     update(_delta: number): void {

@@ -1,4 +1,5 @@
 import { Point, Content } from '../scene';
+import { Tooltip } from '../ui';
 
 export class Viewport {
     center: Point;
@@ -44,13 +45,19 @@ export enum MoonResource {
 }
 
 
+export interface Star {
+    name: string;
+}
+
 export class System {
     location: Point;
     name: string;
     planets: Planet[];
+    star: Star;
 
     constructor(location: Point, name: string) {
         this.location = location;
+        this.star = { name: name };
         this.name = name;
         this.planets = [];
     }
@@ -80,4 +87,5 @@ export abstract class Render {
     abstract add(geometry: Content): void;
     abstract show_map(map: StarMap): void;
     abstract new_map(): StarMap;
+    abstract use_tooltip(tooltip: Tooltip): void;
 }

@@ -40,7 +40,7 @@ function format_acc(speed: number, element: Data) {
     element.data = speed.toFixed(2);
 }
 
-class Tooltip {
+export class Tooltip {
     private element: Element;
 
     constructor(element: Element) {
@@ -48,7 +48,7 @@ class Tooltip {
     }
 
     set text(text: string) {
-        this.element.textContent = text.replace("\\n", "\n");
+        this.element.innerHTML = text.replace("\\n", "<br/>");
     }
 
     set_from(element: Element) {
@@ -67,16 +67,17 @@ class Tooltip {
 
 export class Bar {
     private vel: Data;
+    tooltip: Tooltip;
 
     constructor(bar: Element) {
         this.vel = new Data(bar, 'vel');
-        let tooltip = new Tooltip(bar.querySelector('.tooltip.content')!);
+        this.tooltip = new Tooltip(bar.querySelector('.tooltip.content')!);
         bar.querySelectorAll('[tooltip]').forEach((e) => {
             e.addEventListener('mouseover', (_) => {
-                tooltip.set_from(e);
+                this.tooltip.set_from(e);
             });
             e.addEventListener('mouseout', (_) => {
-                tooltip.hide();
+                this.tooltip.hide();
             });
         });
     }

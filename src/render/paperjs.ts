@@ -1,11 +1,13 @@
 import { Render, Viewport, StarMap, System, Resource, MoonResource } from './render';
 import { Content, ContentType, Ship } from '../scene';
+import { Tooltip } from '../ui';
 
 import { PaperScope, Matrix, Point, Path, Color, Group, PointText, Tween, Rectangle, Size } from 'paper';
 
 export class PaperJS extends Render {
     private paper: PaperScope;
     private scene: Group;
+    private tooltip?: Tooltip;
 
     constructor(canvas: HTMLCanvasElement) {
         super(canvas);
@@ -48,7 +50,11 @@ export class PaperJS extends Render {
     }
 
     new_map(): StarMap {
-        return new PaperMap(this.paper);
+        return new PaperMap(this.paper, this.tooltip!);
+    }
+
+    use_tooltip(tooltip: Tooltip): void {
+        this.tooltip = tooltip;
     }
 }
 
@@ -63,11 +69,13 @@ function centroid(triangle: Path) {
 class PaperMap extends StarMap {
     private paper: PaperScope;
     scene: Group;
+    private tooltip: Tooltip;
 
-    constructor(paper: PaperScope) {
+    constructor(paper: PaperScope, tooltip: Tooltip) {
         super();
         this.scene = new Group();
         this.paper = paper;
+        this.tooltip = tooltip;
     }
 
     add(star: System): void {
@@ -101,22 +109,19 @@ class PaperMap extends StarMap {
         let sq4_centroid = centroid(sq4);
         sq5.fillColor = new Color('#444');
         let sun = new Group([sq1, sq2, sq3, sq4, sq5, sq6, sq7]);
+        sun.on('mouseenter', () => {
+            this.tooltip.text = `${star.star.name}\n<span style="color: #d79921">lithium</span>-rich star`;
+        });
         sun.strokeColor = new Color('#444');
         sq6.fillColor = new Color('#111');
         sq7.strokeWidth = 0;
         sq7.fillColor = new Color("#d79921");
         sun.visible = false;
-        let system_name = new PointText(new Point(loc.x!, loc.y! - 165));
-        system_name.fillColor = new Color('#999');
-        system_name.justification = 'center';
-        system_name.content = `${star.name} system`;
-        system_name.fontFamily = `'Fira Mono', 'Source Code Pro', 'Courier New', Courier, monospace`;
         let h_geo = new Group();
         let geometry = new Group([circ, surround, sun]);
         let planets = new Group();
         let moons = new Group();
         geometry.addChild(planets);
-        h_geo.addChild(system_name);
         let rotate_geos = new Map();
         let sq_co = true;
         star.planets.forEach((planet) => {
@@ -177,9 +182,13 @@ class PaperMap extends StarMap {
         moons.visible = false;
         h_geo.visible = false;
         surround.fillColor = new Color('#111')
+        circ.on('mouseenter', () => {
+            this.tooltip.text = `${star.name} system`;
+        });
         geometry.on('mouseenter', () => {
             surround.opacity = 0;
             sun.visible = true;
+            this.tooltip.show();
             planets.visible = true;
             h_geo.visible = true;
             moons.visible = true;
@@ -190,6 +199,9 @@ class PaperMap extends StarMap {
             circ.matrix = new Matrix(10, 0, 0, 10, 0, 0);
         });
         this.scene.addChildren([geometry]);
+        circ.on('mouseleave', () => {
+            this.tooltip.hide();
+        });
         geometry.on('mouseleave', () => {
             surround.opacity = 1;
             sun.visible = false;
