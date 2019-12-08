@@ -79,26 +79,42 @@ export function initialize(game: Game) {
     let sol = new System(new Point(0, 0), "sol");
     sol.planets.push({
         orbit: {
-            radius: 100,
+            radius: 70,
             speed: 5
-        }, position: 0, size: 10,
+        }, position: 0, size: 5,
         resources: [Resource.Petroleum],
         moons: [{
             orbit: {
-                radius: 20,
-                speed: -10
+                radius: 15,
+                speed: -2
             },
             position: 0,
-            size: 2,
+            size: 1,
             resource: MoonResource.Silica,
         }, {
             orbit: {
-                radius: 30,
-                speed: 5
+                radius: 10,
+                speed: 0.5
             },
             position: 0,
-            size: 3,
+            size: 2,
             resource: MoonResource.Corundum,
+        }]
+    });
+    sol.planets.push({
+        orbit: {
+            radius: 120,
+            speed: -10
+        }, position: 0, size: 10,
+        resources: [],
+        moons: [{
+            orbit: {
+                radius: 15,
+                speed: -4
+            },
+            position: 0,
+            size: 1,
+            resource: MoonResource.Silica,
         }]
     });
     map.add(sol);
