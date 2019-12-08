@@ -124,9 +124,8 @@ class PaperMap extends StarMap {
                 let resource_geo = new Path.Circle(p_loc, planet.size + accu + 1);
                 planet_geometry.addChild(resource_geo);
                 accu += 1;
-                switch (resource) {
-                    case Resource.Petroleum:
-                        resource_geo.fillColor = new Color('#0f0');
+                if (resource == Resource.Petroleum) {
+                    resource_geo.fillColor = new Color('#0f0');
                 }
             });
             planet.moons.forEach(moon => {
@@ -134,11 +133,12 @@ class PaperMap extends StarMap {
                 let m_loc = new Point(loc.x! + planet.orbit.radius + moon.orbit.radius, loc.y!);
                 let m_base = new Path.Circle(m_loc, moon.size);
                 m_orbit.strokeColor = new Color('#555');
-                switch (moon.resource) {
-                    case MoonResource.Silica:
-                        m_base.fillColor = new Color('#ff0');
-                    case MoonResource.Corundum:
-                        m_base.fillColor = new Color('#34d8eb');
+                if (moon.resource == MoonResource.Silica) {
+                    m_base.fillColor = new Color('#ff0');
+                }
+
+                else if (moon.resource == MoonResource.Corundum) {
+                    m_base.fillColor = new Color('#34d8eb');
                 }
 
                 rotate_geos.set(moon, [m_base, m_orbit])
@@ -192,12 +192,13 @@ class PaperMap extends StarMap {
                 let planet_center = new Point(planet.orbit.radius * Math.cos(Math.PI / 180 * planet.position), planet.orbit.radius * Math.sin(Math.PI / 180 * planet.position));
 
                 rotate_geos.get(planet).rotate(planet.orbit.speed / 50, loc);
-                planet.position += planet.orbit.speed / 50;
+                planet.position = (planet.position + planet.orbit.speed / 50) % 360;
                 planet.moons.forEach((moon) => {
                     rotate_geos.get(moon)[0].rotate(moon.orbit.speed / 10, planet_center);
                     rotate_geos.get(moon)[0].rotate(planet.orbit.speed / 50, loc);
                     rotate_geos.get(moon)[1].rotate(moon.orbit.speed / 10, planet_center);
                     rotate_geos.get(moon)[1].rotate(planet.orbit.speed / 50, loc);
+                    moon.position = (moon.position + moon.orbit.speed / 50) % 360;
 
                 })
             });
