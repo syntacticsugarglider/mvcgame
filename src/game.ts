@@ -68,12 +68,6 @@ export function handle_pan(scene: Render) {
 }
 
 export function initialize(game: Game) {
-    let ship = new Ship();
-
-    ship.velocity = new Point(100, 100);
-
-    game.add(ship);
-
     let map = game.scene.new_map();
 
     let sol = new System(new Point(0, 0), "sol");

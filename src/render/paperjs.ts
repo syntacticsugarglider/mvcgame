@@ -43,7 +43,8 @@ export class PaperJS extends Render {
     }
 
     show_map(map: StarMap): void {
-        this.scene.opacity = 0;
+        this.scene.visible = false;
+        (map as PaperMap).scene.visible = true;
     }
 
     new_map(): StarMap {
@@ -61,10 +62,11 @@ function centroid(triangle: Path) {
 
 class PaperMap extends StarMap {
     private paper: PaperScope;
-    private scene: Group;
+    scene: Group;
 
     constructor(paper: PaperScope) {
         super();
+        this.scene = new Group();
         this.paper = paper;
     }
 
@@ -81,6 +83,8 @@ class PaperMap extends StarMap {
         label.justification = 'center';
         label.content = star.name;
         label.fontFamily = `'Fira Mono', 'Source Code Pro', 'Courier New', Courier, monospace`;
+        this.scene.addChildren([circ, surround, label]);
+        this.scene.visible = false;
         let sq1 = new Path.Circle(loc, 25);
         let sq2 = new Path.RegularPolygon(loc, 3, 25);
         let sq3 = new Path.RegularPolygon(loc, 3, 25);
@@ -185,6 +189,7 @@ class PaperMap extends StarMap {
             moons.bringToFront();
             circ.matrix = new Matrix(10, 0, 0, 10, 0, 0);
         });
+        this.scene.addChildren([geometry]);
         geometry.on('mouseleave', () => {
             surround.opacity = 1;
             sun.visible = false;
