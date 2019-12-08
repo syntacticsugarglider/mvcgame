@@ -1,4 +1,4 @@
-import { Render, System, Resource } from './render/render';
+import { Render, System, Resource, MoonResource } from './render/render';
 import { Content, Updater, Ship, Point, ContentType } from './scene';
 import { Bar } from "./ui";
 
@@ -82,7 +82,24 @@ export function initialize(game: Game) {
             radius: 100,
             speed: 5
         }, position: 0, size: 10,
-        resources: [Resource.Petroleum]
+        resources: [Resource.Petroleum],
+        moons: [{
+            orbit: {
+                radius: 20,
+                speed: -10
+            },
+            position: 0,
+            size: 2,
+            resource: MoonResource.Silica,
+        }, {
+            orbit: {
+                radius: 30,
+                speed: 5
+            },
+            position: 0,
+            size: 3,
+            resource: MoonResource.Corundum,
+        }]
     });
     map.add(sol);
 

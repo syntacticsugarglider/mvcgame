@@ -1,4 +1,4 @@
-import { Render, Viewport, StarMap, System, Resource, MoonResource } from './render';
+import { Render, Viewport, StarMap, System, Resource } from './render';
 import { Content, ContentType, Ship } from '../scene';
 
 import { PaperScope, Matrix, Point, Path, Color, Group, PointText, Tween, Rectangle, Size } from 'paper';
@@ -111,7 +111,8 @@ class PaperMap extends StarMap {
         let moons = new Group();
         geometry.addChild(planets);
         h_geo.addChild(system_name);
-        let rotate_geos = new Map();
+        let planet_geos = new Map();
+        let moon_geos = new Map();
         star.planets.forEach((planet) => {
             let planet_geometry = new Group([]);
             let orbit = new Path.Circle(loc, planet.orbit.radius);
@@ -132,25 +133,24 @@ class PaperMap extends StarMap {
             planet.moons.forEach(moon => {
                 let m_orbit = new Path.Circle(p_loc, moon.orbit.radius);
                 let m_loc = new Point(loc.x! + planet.orbit.radius + moon.orbit.radius, loc.y!);
-                let m_base = new Path.Circle(m_loc, moon.size);
-                m_orbit.strokeColor = new Color('#555');
+                let m_base = new Path.Circle(m_loc, 1);
+                let moon_geometry = new Group([])
                 switch (moon.resource) {
-                    case MoonResource.Silica:
-                        m_base.fillColor = new Color('#ff0');
-                    case MoonResource.Corundum:
-                        m_base.fillColor = new Color('#34d8eb');
+                    case Resource.Petroleum:
+                        m_base.fillColor = new Color('#0f0');
                 }
-
-                rotate_geos.set(moon, [m_base, m_orbit])
-
-                moons.addChild(m_base);
+                m_orbit.strokeColor = new Color('#777');
+                moon_geometry.addChild(m_base);
+                moon_geometry.addChild(m_orbit);
+                moon_geos.set(moon, moon_geometry)
                 h_geo.addChild(m_orbit);
+                moons.addChild(moon_geometry);
 
             })
             planet_geometry.addChild(base);
             orbit.strokeColor = new Color('#777');
             h_geo.addChild(orbit);
-            rotate_geos.set(planet, planet_geometry);
+            planet_geos.set(planet, planet_geometry);
             planets.addChild(planet_geometry);
         });
         geometry.addChild(h_geo);
@@ -167,7 +167,6 @@ class PaperMap extends StarMap {
             circ.fillColor = new Color('#111');
             sun.bringToFront();
             planets.bringToFront();
-            moons.bringToFront();
             circ.matrix = new Matrix(10, 0, 0, 10, 0, 0);
         });
         geometry.on('mouseleave', () => {
@@ -175,8 +174,8 @@ class PaperMap extends StarMap {
             sun.visible = false;
             circ.fillColor = new Color('#000');
             planets.visible = false;
-            h_geo.visible = false;
             moons.visible = false;
+            h_geo.visible = false;
             sun.sendToBack();
             circ.matrix = new Matrix(1 / 10, 0, 0, 1 / 10, 0, 0);
         });
@@ -188,15 +187,12 @@ class PaperMap extends StarMap {
             sq8.rotate(0.05);
             sq9.rotate(0.1);
             star.planets.forEach((planet) => {
-                let planet_center = new Point(planet.orbit.radius * Math.cos(Math.PI / 180 * planet.position), planet.orbit.radius * Math.sin(Math.PI / 180 * planet.position));
-
-                rotate_geos.get(planet).rotate(planet.orbit.speed / 50, loc);
-                planet.position += planet.orbit.speed / 50;
+                planet_geos.get(planet).rotate(planet.orbit.speed / 50, loc);
+                planet.position += planet.orbit.speed / 50
                 planet.moons.forEach((moon) => {
-                    rotate_geos.get(moon)[0].rotate(moon.orbit.speed / 10, planet_center);
-                    rotate_geos.get(moon)[0].rotate(planet.orbit.speed / 50, loc);
-                    rotate_geos.get(moon)[1].rotate(moon.orbit.speed / 10, planet_center);
-                    rotate_geos.get(moon)[1].rotate(planet.orbit.speed / 50, loc);
+                    moon_geos.get(moon).rotate(moon.orbit.speed / 50, planet_geos.get(planet).center);
+                    moon.position += moon.orbit.speed / 20
+
 
                 })
             });

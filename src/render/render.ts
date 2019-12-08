@@ -15,11 +15,19 @@ export interface Orbit {
     speed: number;
 }
 
+export interface Moon {
+    orbit: Orbit;
+    position: number;
+    size: number;
+    resource: MoonResource;
+}
+
 export interface Planet {
     orbit: Orbit;
     position: number;
     size: number;
     resources: Resource[],
+    moons: Moon[];
 }
 
 export enum StarResource {
@@ -29,6 +37,12 @@ export enum StarResource {
 export enum Resource {
     Petroleum,
 }
+
+export enum MoonResource {
+    Silica,
+    Corundum
+}
+
 
 export class System {
     location: Point;
