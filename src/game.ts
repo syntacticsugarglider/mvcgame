@@ -73,11 +73,12 @@ export function initialize(game: Game) {
 
     let sol = new System(new Point(0, 0), "sol");
     sol.planets.push({
+        name: "yum cimil",
         orbit: {
             radius: 70,
             speed: 5
         }, position: 0, size: 5,
-        resources: [Resource.Petroleum],
+        resources: [Resource.Petroleum, Resource.Petroleum, Resource.Petroleum],
         moons: [{
             orbit: {
                 radius: 15,
@@ -97,6 +98,7 @@ export function initialize(game: Game) {
         }]
     });
     sol.planets.push({
+        name: "chaac",
         orbit: {
             radius: 120,
             speed: -10

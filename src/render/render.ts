@@ -25,6 +25,7 @@ export interface Moon {
 
 export interface Planet {
     orbit: Orbit;
+    name: string;
     position: number;
     size: number;
     resources: Resource[],

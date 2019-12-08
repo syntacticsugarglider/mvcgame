@@ -139,16 +139,39 @@ class PaperMap extends StarMap {
             let p_loc = new Point(loc.x! + planet.orbit.radius, loc.y!);
             let base = new Path.Circle(p_loc, planet.size);
             base.fillColor = new Color('#444');
-
             let accu = 0;
+            let resource_html = "";
             planet.resources.forEach((resource) => {
                 let resource_geo = new Path.Circle(p_loc, planet.size + accu + 1);
                 planet_geometry.addChild(resource_geo);
-                accu += 1;
+                let rec;
                 switch (resource) {
                     case Resource.Petroleum:
                         resource_geo.fillColor = new Color('#b16286');
+                        rec = `<span style="color: #b16286">petroleum</span>`;
                 }
+                if (accu == 0) {
+                    if (planet.resources.length < 3) {
+                        resource_html += `${rec}`
+                    } else {
+                        resource_html += `${rec}, `
+                    }
+                } else if (planet.resources.length == 2) {
+                    resource_html += ` and ${rec}`
+                } else if (accu < planet.resources.length - 1) {
+                    resource_html += `${rec}`;
+                } else {
+                    resource_html += `, and ${rec}`;
+                }
+                accu += 1;
+            });
+            if (planet.resources.length == 0) {
+                resource_html = "barren";
+            } else {
+                resource_html = `high ${resource_html} content`
+            }
+            planet_geometry.on('mouseenter', () => {
+                this.tooltip.text = `${planet.name}\n${resource_html}`;
             });
             h_geo.insertChild(0, sq);
             sq.rotate(planet.position + 90, sq_centroid);
@@ -169,6 +192,9 @@ class PaperMap extends StarMap {
                 rotate_geos.set(moon, [m_base, m_orbit])
                 moons.addChild(m_base);
                 h_geo.addChild(m_orbit);
+                m_orbit.on('mouseenter', () => {
+                    this.tooltip.text = `${planet.name}\n${resource_html}`;
+                });
             })
             planet_geometry.addChild(base);
             orbit.strokeColor = new Color('#444');
