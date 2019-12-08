@@ -110,7 +110,7 @@ class PaperMap extends StarMap {
         sq5.fillColor = new Color('#444');
         let sun = new Group([sq1, sq2, sq3, sq4, sq5, sq6, sq7]);
         sun.on('mouseenter', () => {
-            this.tooltip.text = `${star.star.name}\n<span style="color: #d79921">lithium</span>-rich star`;
+            this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: #d79921">lithium</span>-rich`;
         });
         sun.strokeColor = new Color('#444');
         sq6.fillColor = new Color('#111');
@@ -171,7 +171,7 @@ class PaperMap extends StarMap {
                 resource_html = `high ${resource_html} content`
             }
             planet_geometry.on('mouseenter', () => {
-                this.tooltip.text = `${planet.name}\n${resource_html}`;
+                this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
             });
             h_geo.insertChild(0, sq);
             sq.rotate(planet.position + 90, sq_centroid);
@@ -193,7 +193,7 @@ class PaperMap extends StarMap {
                 moons.addChild(m_base);
                 h_geo.addChild(m_orbit);
                 m_orbit.on('mouseenter', () => {
-                    this.tooltip.text = `${planet.name}\n${resource_html}`;
+                    this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
                 });
             })
             planet_geometry.addChild(base);

@@ -78,7 +78,7 @@ export function initialize(game: Game) {
             radius: 70,
             speed: 5
         }, position: 0, size: 5,
-        resources: [Resource.Petroleum, Resource.Petroleum, Resource.Petroleum],
+        resources: [Resource.Petroleum],
         moons: [{
             orbit: {
                 radius: 15,
