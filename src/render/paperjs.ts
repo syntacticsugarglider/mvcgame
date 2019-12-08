@@ -170,32 +170,56 @@ class PaperMap extends StarMap {
             } else {
                 resource_html = `high ${resource_html} content`
             }
-            planet_geometry.on('mouseenter', () => {
-                this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
-            });
             h_geo.insertChild(0, sq);
             sq.rotate(planet.position + 90, sq_centroid);
             this.paper.view.on('frame', () => {
                 sq.rotate(planet.orbit.speed / 50, sq_centroid);
             });
+            let moon_idx = 0;
+            let rec2 = "";
             planet.moons.forEach(moon => {
                 let m_orbit = new Path.Circle(p_loc, moon.orbit.radius);
                 let m_loc = new Point(loc.x! + planet.orbit.radius + moon.orbit.radius, loc.y!);
                 let m_base = new Path.Circle(m_loc, moon.size);
                 m_orbit.strokeColor = new Color('#555');
+                let rec;
                 switch (moon.resource) {
                     case MoonResource.Silica:
                         m_base.fillColor = new Color('#458588');
+                        rec = `<span style="color: #458588">silica</span>`;
                     case MoonResource.Corundum:
+                        rec = `<span style="color: #698d6a">corundum</span>`;
                         m_base.fillColor = new Color('#698d6a');
                 }
                 rotate_geos.set(moon, [m_base, m_orbit])
                 moons.addChild(m_base);
                 h_geo.addChild(m_orbit);
+                if (moon_idx == 0) {
+                    if (planet.moons.length < 3) {
+                        rec2 += `${rec}`
+                    } else {
+                        rec2 += `${rec}, `
+                    }
+                } else if (planet.moons.length == 2) {
+                    rec2 += ` and ${rec}`
+                } else if (accu < planet.moons.length - 1) {
+                    rec2 += `${rec}`;
+                } else {
+                    rec2 += `, and ${rec}`;
+                }
                 m_orbit.on('mouseenter', () => {
                     this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
                 });
+                moon_idx += 1;
             })
+            if (planet.moons.length == 1) {
+                resource_html += `\nmoon abounds with ${rec2}`;
+            } else {
+                resource_html += `\nmoons abound with ${rec2}`
+            }
+            planet_geometry.on('mouseenter', () => {
+                this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
+            });
             planet_geometry.addChild(base);
             orbit.strokeColor = new Color('#444');
             h_geo.addChild(orbit);
