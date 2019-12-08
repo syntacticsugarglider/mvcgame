@@ -154,6 +154,7 @@ class PaperMap extends StarMap {
             planets.addChild(planet_geometry);
         });
         geometry.addChild(h_geo);
+        geometry.addChild(moons);
         planets.visible = false;
         moons.visible = false;
         h_geo.visible = false;
