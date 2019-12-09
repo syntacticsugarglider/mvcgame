@@ -290,6 +290,10 @@ class PaperMap extends StarMap {
             circ.scale(10);
         });
 
+        geometry.on('mouseleave', () => {
+            this.tooltip.hide();
+        });
+
 
         // geometry.on('mousemove', (event: MouseEvent) => {
         //     console.log(event.delta);
