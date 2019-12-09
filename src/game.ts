@@ -138,8 +138,7 @@ function generate_system(b_source: RandomProvider): System {
     let location = new Point(rand(-1000, 1000, b_source), rand(-1000, 1000, b_source));
     let seed = hash(`${location.x}${location.y}`);
     let source = new RandomProvider(seed);
-    let system = new System(new Point(0, 0), word(rand(3, 8, source), source));
-    system.location = location;
+    let system = new System(location, word(rand(3, 8, source), source));
     let count_options: [number, number][] = [[1, 5], [2, 4], [3, 3]];
     let planet_count = select_random(weighted_list(count_options), source);
     for (let i = 0; i < planet_count; i++) {

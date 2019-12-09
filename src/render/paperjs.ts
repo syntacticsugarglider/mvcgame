@@ -125,6 +125,7 @@ class PaperMap extends StarMap {
         geometry.addChild(planets);
         let rotate_geos = new Map();
         let sq_co = true;
+        let ordered_planet_geos: Path[] = [];
         star.planets.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
         star.planets.forEach((planet) => {
             resource_html = "";
@@ -141,6 +142,7 @@ class PaperMap extends StarMap {
             }
             let p_loc = new Point(loc.x! + planet.orbit.radius, loc.y!);
             let base = new Path.Circle(p_loc, planet.size);
+            ordered_planet_geos.push(base);
             base.fillColor = new Color('#444');
             let accu = 0;
             planet.resources.forEach((resource) => {
@@ -275,8 +277,10 @@ class PaperMap extends StarMap {
             sq4.rotate(1.2, sq4_centroid);
             sq8.rotate(0.05);
             sq9.rotate(0.1);
+            let p_idx = 0;
             star.planets.forEach((planet) => {
-                let planet_center = new Point(planet.orbit.radius * Math.cos(Math.PI / 180 * planet.position), planet.orbit.radius * Math.sin(Math.PI / 180 * planet.position));
+                let planet_center = ordered_planet_geos[p_idx].position;
+                p_idx += 1;
                 rotate_geos.get(planet).rotate(planet.orbit.speed / 50, loc);
                 planet.position += planet.orbit.speed / 50;
                 planet.moons.forEach((moon) => {
