@@ -203,7 +203,7 @@ class PaperMap extends StarMap {
                 resource_html = `high ${resource_html} content`
             }
             h_geo.insertChild(0, sq);
-            sq.rotate(planet.position + 90, sq_centroid);
+            sq.rotate(90, sq_centroid);
             let moon_idx = 0;
             let rec2 = "";
             planet.moons.forEach(moon => {
@@ -329,11 +329,9 @@ class PaperMap extends StarMap {
             sq9.rotate(0.1);
             let p_idx = 0;
             star.planets.forEach((planet) => {
-                let planet_center = ordered_planet_geos[p_idx].position;
                 p_idx += 1;
                 planet.position += planet.orbit.speed / 50;
                 planet.moons.forEach((moon) => {
-
                     moon.position = (moon.position + moon.orbit.speed / 50) % 360;
                 })
             });
