@@ -246,6 +246,7 @@ class PaperMap extends StarMap {
             planet_geometry.addChild(base);
             this.paper.view.on('frame', () => {
                 planet_geometry.rotate(planet.orbit.speed / 50, loc);
+                sq.rotate(planet.orbit.speed / 50, loc);
             });
             orbit.strokeColor = new Color('#444');
             h_geo.addChild(orbit);

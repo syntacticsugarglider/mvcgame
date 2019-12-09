@@ -3,7 +3,7 @@ import { Content, Updater, Ship, Point, ContentType } from './scene';
 import { Bar } from "./ui";
 
 var vowels = ['a', 'e', 'i', 'o', 'u'];
-var consts = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'qu', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z', 'tt', 'ch', 'sh'];
+var consts = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'qu', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z', 'ch', 'sh', 'sv', 'yt', 'bl'];
 
 class RandomProvider {
     private seed: number;
