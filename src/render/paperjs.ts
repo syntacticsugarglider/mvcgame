@@ -221,19 +221,26 @@ class PaperMap extends StarMap {
                 }
                 moons.addChild(m_base);
                 h_geo.addChild(m_orbit);
-                if (moon_idx == 0) {
-                    if (planet.moons.length < 3) {
+
+                if (planet.moons.length < 3) {
+                    if (moon_idx == 0) {
                         rec2 += `${rec}`
-                    } else {
+                    }
+                    else {
+                        rec2 += ` and ${rec}`
+                    }
+                }
+
+                if (planet.moons.length >= 3) {
+                    if (moon_idx < planet.moons.length - 1) {
                         rec2 += `${rec}, `
                     }
-                } else if (planet.moons.length == 2) {
-                    rec2 += ` and ${rec}`
-                } else if (accu < planet.moons.length - 1) {
-                    rec2 += `${rec}`;
-                } else {
-                    rec2 += `, and ${rec}`;
+                    if (moon_idx == planet.moons.length - 1) {
+                        rec2 += `and ${rec}`
+                    }
                 }
+
+
                 this.paper.view.on('frame', () => {
                     m_base.rotate(moon.orbit.speed / 10, base.position!);
                 });
