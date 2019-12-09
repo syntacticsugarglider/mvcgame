@@ -1,4 +1,4 @@
-import { Render, Viewport, StarMap, System, Resource, MoonResource } from './render';
+import { Render, Viewport, StarMap, System, Resource, MoonResource, StarResource } from './render';
 import { Content, ContentType, Ship } from '../scene';
 import { Tooltip } from '../ui';
 
@@ -111,14 +111,23 @@ class PaperMap extends StarMap {
         sq5.fillColor = new Color('#444');
         let sun = new Group([sq1, sq2, sq3, sq4, sq5, sq6, sq10]);
         let resource_html = "";
+        let s_resource_name = "";
+        let s_resource_color = "";
+        if (star.star.resource == StarResource.Caesium) {
+            s_resource_name = 'caesium';
+            s_resource_color = '#cc241d';
+        } else if (star.star.resource == StarResource.Lithium) {
+            s_resource_name = 'lithium';
+            s_resource_color = '#d79921';
+        }
         sun.on('mouseenter', () => {
-            this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: #d79921">lithium</span>-rich`;
+            this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich`;
         });
         sun.strokeColor = new Color('#444');
         sq6.fillColor = new Color('#111');
         sq7.strokeWidth = 0;
-        sq7.fillColor = new Color("#d79921");
-        sq10.fillColor = new Color("#d79921");
+        sq7.fillColor = new Color(s_resource_color);
+        sq10.fillColor = new Color(s_resource_color);
         sun.visible = false;
         let h_geo = new Group();
         let geometry = new Group([circ, surround, sun]);

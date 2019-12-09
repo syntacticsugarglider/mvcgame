@@ -33,7 +33,8 @@ export interface Planet {
 }
 
 export enum StarResource {
-    Lithium
+    Lithium,
+    Caesium
 }
 
 export enum Resource {
@@ -48,6 +49,7 @@ export enum MoonResource {
 
 export interface Star {
     name: string;
+    resource: StarResource
 }
 
 export class System {
@@ -56,9 +58,9 @@ export class System {
     planets: Planet[];
     star: Star;
 
-    constructor(location: Point, name: string) {
+    constructor(location: Point, name: string, resource: StarResource) {
         this.location = location;
-        this.star = { name: name };
+        this.star = { name: name, resource: resource };
         this.name = name;
         this.planets = [];
     }

@@ -1,4 +1,4 @@
-import { Render, System, Resource, MoonResource, Moon } from './render/render';
+import { Render, System, Resource, MoonResource, Moon, StarResource } from './render/render';
 import { Content, Updater, Ship, Point, ContentType } from './scene';
 import { Bar } from "./ui";
 
@@ -138,7 +138,8 @@ function generate_system(b_source: RandomProvider): System {
     let location = new Point(rand(-1000, 1000, b_source), rand(-1000, 1000, b_source));
     let seed = hash(`${location.x}${location.y}`);
     let source = new RandomProvider(seed);
-    let system = new System(location, word(rand(3, 8, source), source));
+    let resource = select_random(weighted_list([[StarResource.Lithium, 5], [StarResource.Caesium, 1]]), source);
+    let system = new System(location, word(rand(3, 8, source), source), resource);
     let count_options: [number, number][] = [[1, 5], [2, 4], [3, 3]];
     let planet_count = select_random(weighted_list(count_options), source);
     for (let i = 0; i < planet_count; i++) {
