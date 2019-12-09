@@ -143,7 +143,7 @@ function hash(item: string): number {
 }
 
 function generate_system(b_source: RandomProvider): System {
-    let location = new Point(rand(-1000, 1000, b_source), rand(-1000, 1000, b_source));
+    let location = new Point(rand(-2000, 2000, b_source), rand(-2000, 2000, b_source));
     let seed = hash(`${location.x}${location.y}`);
     let source = new RandomProvider(seed);
     let resource = select_random(weighted_list([[StarResource.Lithium, 5], [StarResource.Caesium, 1]]), source);
@@ -164,7 +164,7 @@ function generate_system(b_source: RandomProvider): System {
         for (let i = 0; i < moon_count; i++) {
             let size = rand(2, 5, source);
             planet.moons.push({
-                orbit: { radius: rand(5, 10, source) + size + planet.size, speed: rand_gt(1, -5, 5, source) },
+                orbit: { radius: rand(10, 30, source) + size + planet.size, speed: rand_gt(1, -5, 5, source) },
                 size: size,
                 position: rand(0, 360, source),
                 resource: MoonResource.Corundum
