@@ -39,6 +39,7 @@ export enum StarResource {
 
 export enum Resource {
     Petroleum,
+    Cellulose
 }
 
 export enum MoonResource {

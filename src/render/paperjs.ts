@@ -203,8 +203,7 @@ class PaperMap extends StarMap {
                 if (moon.resource == MoonResource.Silica) {
                     m_base.fillColor = new Color('#458588');
                     rec = `<span style="color: #458588">silica</span>`;
-                }
-                if (moon.resource == MoonResource.Corundum) {
+                } else if (moon.resource == MoonResource.Corundum) {
                     rec = `<span style="color: #698d6a">corundum</span>`;
                     m_base.fillColor = new Color('#698d6a');
                 }

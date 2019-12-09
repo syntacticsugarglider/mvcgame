@@ -153,12 +153,14 @@ function generate_system(b_source: RandomProvider): System {
     for (let i = 0; i < planet_count; i++) {
         let count_options: [number, number][] = [[0, 5], [2, 2], [3, 2], [4, 1]];
         let moon_count = select_random(weighted_list(count_options), source);
+        let r_count_options: [number, number][] = [[0, 10], [1, 5], [2, 2]];
+        let resource_count = select_random(weighted_list(r_count_options), source);
         let planet = {
             orbit: { radius: rand(50, 120, source), speed: rand_gt(1, -10, 10, source) },
             name: word(rand(3, 8, source), source),
             position: rand(0, 360, source),
             size: rand(10, 20, source),
-            resources: [],
+            resources: [] as Resource[],
             moons: [] as Moon[],
         };
         for (let i = 0; i < moon_count; i++) {
@@ -169,6 +171,20 @@ function generate_system(b_source: RandomProvider): System {
                 position: rand(0, 360, source),
                 resource: MoonResource.Corundum
             });
+        }
+        let n_ex = (r: Resource): boolean => {
+            for (let res of planet.resources) {
+                if (res == r) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        let r_opts = [Resource.Petroleum, Resource.Cellulose];
+        for (let i = 0; i < resource_count; i++) {
+            let res = select_random(r_opts, source);
+            r_opts.splice(r_opts.indexOf(res), 1);
+            planet.resources.push(res!);
         }
         system.planets.push(planet);
     }
