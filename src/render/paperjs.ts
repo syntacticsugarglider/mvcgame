@@ -109,6 +109,47 @@ class PaperMap extends StarMap {
         let sq8 = new Path.RegularPolygon(loc, 4, 148);
         let sq9 = new Path.RegularPolygon(loc, 4, 148);
         let sq10 = new Path.Circle(loc, 7);
+        let sq_target = 0;
+        let sq11 = new Path.Arc(loc.add(new Point(0, 150)), loc.add(new Point(150, 0)), loc.subtract(new Point(0, 150)));
+        sq11.strokeWidth = 5;
+        let clip = new Path.Rectangle(new Rectangle(loc.subtract(new Point(0, 160)), new Size(160, 320)));
+        let sq_group = new Group([clip, sq11])
+        sq_group.clipped = true;
+        let jumping = false;
+        let incr = 2;
+        let arc_rad = 25;
+        this.paper.view.on('frame', () => {
+            if (!jumping) {
+                return;
+            }
+            let target = sq_target - 90;
+            sq_group.clipped = false;
+            sq_group.remove();
+            sq11.remove();
+            if (sq_target < 180) {
+                sq11 = new Path.Arc(loc.add(new Point(0, arc_rad)), loc.add(new Point(0, -arc_rad)), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)), arc_rad * Math.sin(target * (Math.PI / 180)))));
+            } else {
+                sq11 = new Path.Arc(loc.add(new Point(0, -arc_rad)), loc.add(new Point(0, arc_rad)), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)), arc_rad * Math.sin(target * (Math.PI / 180)))));
+            }
+            sq11.strokeWidth = 2;
+            sq11.strokeColor = new Color('#eee');
+            sq_group = new Group([clip, sq11])
+            sq_target += incr;
+            if (sq_target - incr < 0) {
+                jumping = false;
+                sq11.remove();
+                return;
+            }
+            if (sq_target + incr > 360) {
+                jumping = false;
+                sq11.remove();
+                return;
+            }
+            sq_target = sq_target % 360;
+            if (sq_target < 180) {
+                sq_group.clipped = true;
+            }
+        });
         let sq2_centroid = centroid(sq2);
         let sq3_centroid = centroid(sq3);
         let sq4_centroid = centroid(sq4);
@@ -286,8 +327,13 @@ class PaperMap extends StarMap {
         circ.on('mouseenter', () => {
             this.tooltip.text = `${star.name} system`;
         });
-
-
+        sun.on('mousedown', () => {
+            incr = 2;
+            jumping = true;
+        });
+        sun.on('mouseup', () => {
+            incr = -4;
+        });
         geometry.on('mouseenter', () => {
             geometry.bringToFront()
             surround.opacity = 0;
