@@ -68,6 +68,7 @@ export class System {
 
 export abstract class StarMap {
     abstract add(star: System): void;
+    abstract hide(): void;
 }
 
 export abstract class Render {

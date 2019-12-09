@@ -78,6 +78,10 @@ class PaperMap extends StarMap {
         this.tooltip = tooltip;
     }
 
+    hide(): void {
+        this.scene.visible = false;
+    }
+
     add(star: System): void {
         let loc = new Point(star.location.x, star.location.y);
         let label = new PointText(new Point(loc.x!, loc.y! + 32.5));
