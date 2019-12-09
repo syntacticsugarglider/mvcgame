@@ -159,6 +159,15 @@ class PaperMap extends StarMap {
             }
             let p_loc = new Point(loc.x! + planet.orbit.radius, loc.y!);
             let base = new Path.Circle(p_loc, planet.size);
+            let max_moon_radius = 0
+            if (planet.moons.length > 0) {
+                max_moon_radius = (planet.moons[planet.moons.length - 1]).orbit.radius
+            }
+
+            let planet_buffer = new Path.Circle(base.position!, max_moon_radius);
+            planet_buffer.fillColor = new Color("fff");
+            planet_buffer.opacity = 0
+            geometry.addChild(planet_buffer);
             ordered_planet_geos.push(base);
             base.fillColor = new Color('#444');
             let accu = 0;
@@ -245,6 +254,7 @@ class PaperMap extends StarMap {
             planet_geometry.addChild(base);
             this.paper.view.on('frame', () => {
                 planet_geometry.rotate(planet.orbit.speed / 50, loc);
+                planet_buffer.rotate(planet.orbit.speed / 50, loc);
                 sq.rotate(planet.orbit.speed / 50, loc);
             });
             orbit.strokeColor = new Color('#444');
