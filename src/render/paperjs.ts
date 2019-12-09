@@ -139,9 +139,13 @@ class PaperMap extends StarMap {
         let moons = new Group();
         geometry.addChildren([planets, sq7]);
         let rotate_geos = new Map();
-        let sq_co = false;
+
         let ordered_planet_geos: Path[] = [];
-        star.planets.sort((n1, n2) => -n1.orbit.radius + n2.orbit.radius);
+        star.planets.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
+        let sq_co = false;
+        if (star.planets.length % 2 == 0) {
+            sq_co = true;
+        }
         star.planets.forEach((planet) => {
             resource_html = "";
             let planet_geometry = new Group([]);
@@ -272,6 +276,21 @@ class PaperMap extends StarMap {
             moons.bringToFront();
             circ.scale(10);
         });
+
+
+        // geometry.on('mousemove', (event: MouseEvent) => {
+        //     console.log(event.delta);
+        //     star.planets.forEach((planet) => {
+        //         planet.moons.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
+        //         let max_buffer = (planet.moons[planet.moons.length - 1]).orbit.radius;
+        //         let star_dist = (event.clientX - loc.x!) ** 2 + (event.clientY - loc.y!) ** 2;
+        //         if (star_dist <= ((planet.orbit.radius + max_buffer) ** 2) && (star_dist >= ((planet.orbit.radius - max_buffer) ** 2))) {
+        //             this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
+        //         }
+        //     });
+        // })
+
+
         this.scene.addChildren([geometry]);
         circ.on('mouseleave', () => {
             this.tooltip.hide();
