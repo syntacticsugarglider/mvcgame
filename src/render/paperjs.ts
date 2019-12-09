@@ -104,11 +104,12 @@ class PaperMap extends StarMap {
         let sq7 = new Path.Circle(loc, 7);
         let sq8 = new Path.RegularPolygon(loc, 4, 148);
         let sq9 = new Path.RegularPolygon(loc, 4, 148);
+        let sq10 = new Path.Circle(loc, 7);
         let sq2_centroid = centroid(sq2);
         let sq3_centroid = centroid(sq3);
         let sq4_centroid = centroid(sq4);
         sq5.fillColor = new Color('#444');
-        let sun = new Group([sq1, sq2, sq3, sq4, sq5, sq6, sq7]);
+        let sun = new Group([sq1, sq2, sq3, sq4, sq5, sq6, sq10]);
         let resource_html = "";
         sun.on('mouseenter', () => {
             this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: #d79921">lithium</span>-rich`;
@@ -117,12 +118,13 @@ class PaperMap extends StarMap {
         sq6.fillColor = new Color('#111');
         sq7.strokeWidth = 0;
         sq7.fillColor = new Color("#d79921");
+        sq10.fillColor = new Color("#d79921");
         sun.visible = false;
         let h_geo = new Group();
         let geometry = new Group([circ, surround, sun]);
         let planets = new Group();
         let moons = new Group();
-        geometry.addChild(planets);
+        geometry.addChildren([planets, sq7]);
         let rotate_geos = new Map();
         let sq_co = true;
         let ordered_planet_geos: Path[] = [];
