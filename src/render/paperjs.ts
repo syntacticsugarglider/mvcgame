@@ -138,8 +138,6 @@ class PaperMap extends StarMap {
         let planets = new Group();
         let moons = new Group();
         geometry.addChildren([planets, sq7]);
-        let rotate_geos = new Map();
-
         let ordered_planet_geos: Path[] = [];
         star.planets.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
         let sq_co = false;
@@ -194,9 +192,6 @@ class PaperMap extends StarMap {
             }
             h_geo.insertChild(0, sq);
             sq.rotate(planet.position + 90, sq_centroid);
-            this.paper.view.on('frame', () => {
-                sq.rotate(planet.orbit.speed / 50, sq_centroid);
-            });
             let moon_idx = 0;
             let rec2 = "";
             planet.moons.forEach(moon => {
@@ -213,7 +208,6 @@ class PaperMap extends StarMap {
                     rec = `<span style="color: #698d6a">corundum</span>`;
                     m_base.fillColor = new Color('#698d6a');
                 }
-                rotate_geos.set(moon, [m_base, m_orbit])
                 moons.addChild(m_base);
                 h_geo.addChild(m_orbit);
                 if (moon_idx == 0) {
@@ -229,9 +223,13 @@ class PaperMap extends StarMap {
                 } else {
                     rec2 += `, and ${rec}`;
                 }
+                this.paper.view.on('frame', () => {
+                    m_base.rotate(moon.orbit.speed / 10, base.position!);
+                });
                 m_orbit.on('mouseenter', () => {
                     this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
                 });
+                planet_geometry.addChildren([m_orbit, m_base]);
                 moon_idx += 1;
             })
             if (planet.moons.length == 0) {
@@ -246,9 +244,11 @@ class PaperMap extends StarMap {
                 this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
             });
             planet_geometry.addChild(base);
+            this.paper.view.on('frame', () => {
+                planet_geometry.rotate(planet.orbit.speed / 50, loc);
+            });
             orbit.strokeColor = new Color('#444');
             h_geo.addChild(orbit);
-            rotate_geos.set(planet, planet_geometry);
             planets.addChild(planet_geometry);
         });
         geometry.addChild(h_geo);
@@ -316,13 +316,9 @@ class PaperMap extends StarMap {
             star.planets.forEach((planet) => {
                 let planet_center = ordered_planet_geos[p_idx].position;
                 p_idx += 1;
-                rotate_geos.get(planet).rotate(planet.orbit.speed / 50, loc);
                 planet.position += planet.orbit.speed / 50;
                 planet.moons.forEach((moon) => {
-                    rotate_geos.get(moon)[0].rotate(moon.orbit.speed / 10, planet_center);
-                    rotate_geos.get(moon)[0].rotate(planet.orbit.speed / 50, loc);
-                    rotate_geos.get(moon)[1].rotate(moon.orbit.speed / 10, planet_center);
-                    rotate_geos.get(moon)[1].rotate(planet.orbit.speed / 50, loc);
+
                     moon.position = (moon.position + moon.orbit.speed / 50) % 360;
                 })
             });
