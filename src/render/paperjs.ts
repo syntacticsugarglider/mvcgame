@@ -125,7 +125,7 @@ class PaperMap extends StarMap {
             s_resource_color = '#d79921';
         }
         sun.on('mouseenter', () => {
-            this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich`;
+            this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to jump`;
         });
         sun.strokeColor = new Color('#444');
         sq6.fillColor = new Color('#111');
