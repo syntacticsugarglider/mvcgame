@@ -119,6 +119,14 @@ function rand(min: number, max: number, source: RandomProvider) {
     return Math.floor(source.random() * (max - min + 1)) + min;
 }
 
+function rand_gt(abs_min: number, min: number, max: number, source: RandomProvider) {
+    let r = rand(min, max, source);
+    while (Math.abs(r) < abs_min) {
+        r = rand(min, max, source);
+    }
+    return r;
+}
+
 function select_random<T>(list: T[], source: RandomProvider): T {
     return list[rand(0, list.length - 1, source)];
 }
@@ -146,9 +154,9 @@ function generate_system(b_source: RandomProvider): System {
         let count_options: [number, number][] = [[0, 5], [2, 2], [3, 2], [4, 1]];
         let moon_count = select_random(weighted_list(count_options), source);
         let planet = {
-            orbit: { radius: rand(50, 120, source), speed: rand(-10, 10, source) },
+            orbit: { radius: rand(50, 120, source), speed: rand_gt(1, -10, 10, source) },
             name: word(rand(3, 8, source), source),
-            position: 0,
+            position: rand(0, 360, source),
             size: rand(10, 20, source),
             resources: [],
             moons: [] as Moon[],
@@ -156,9 +164,9 @@ function generate_system(b_source: RandomProvider): System {
         for (let i = 0; i < moon_count; i++) {
             let size = rand(2, 5, source);
             planet.moons.push({
-                orbit: { radius: rand(5, 10, source) + size + planet.size, speed: rand(-5, 5, source) },
+                orbit: { radius: rand(5, 10, source) + size + planet.size, speed: rand_gt(1, -5, 5, source) },
                 size: size,
-                position: 0,
+                position: rand(0, 360, source),
                 resource: MoonResource.Corundum
             });
         }
