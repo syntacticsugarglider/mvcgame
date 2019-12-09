@@ -269,7 +269,7 @@ class PaperMap extends StarMap {
             sun.bringToFront();
             planets.bringToFront();
             moons.bringToFront();
-            circ.matrix = new Matrix(10, 0, 0, 10, 0, 0);
+            circ.scale(10);
         });
         this.scene.addChildren([geometry]);
         circ.on('mouseleave', () => {
@@ -283,7 +283,7 @@ class PaperMap extends StarMap {
             h_geo.visible = false;
             moons.visible = false;
             sun.sendToBack();
-            circ.matrix = new Matrix(1 / 10, 0, 0, 1 / 10, 0, 0);
+            circ.scale(1 / 10);
         });
         this.paper.view.on('frame', () => {
             surround.rotate(2);
