@@ -139,9 +139,9 @@ class PaperMap extends StarMap {
         let moons = new Group();
         geometry.addChildren([planets, sq7]);
         let rotate_geos = new Map();
-        let sq_co = true;
+        let sq_co = false;
         let ordered_planet_geos: Path[] = [];
-        star.planets.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
+        star.planets.sort((n1, n2) => -n1.orbit.radius + n2.orbit.radius);
         star.planets.forEach((planet) => {
             resource_html = "";
             let planet_geometry = new Group([]);
@@ -259,6 +259,7 @@ class PaperMap extends StarMap {
 
 
         geometry.on('mouseenter', () => {
+            geometry.bringToFront()
             surround.opacity = 0;
             sun.visible = true;
             this.tooltip.show();
