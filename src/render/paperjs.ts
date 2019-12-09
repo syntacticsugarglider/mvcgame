@@ -210,7 +210,7 @@ class PaperMap extends StarMap {
             sq.rotate(90, sq_centroid);
             let moon_idx = 0;
             let rec2 = "";
-            let moon_set = new Set(planet.moons);
+            let moon_set = new Set(planet.moons.map(x => x.resource));
             planet.moons.forEach(moon => {
                 let m_orbit = new Path.Circle(p_loc, moon.orbit.radius);
                 let m_loc = new Point(loc.x! + planet.orbit.radius + moon.orbit.radius, loc.y!);
