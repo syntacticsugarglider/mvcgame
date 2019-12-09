@@ -109,6 +109,7 @@ class PaperMap extends StarMap {
         let sq4_centroid = centroid(sq4);
         sq5.fillColor = new Color('#444');
         let sun = new Group([sq1, sq2, sq3, sq4, sq5, sq6, sq7]);
+        let resource_html = "";
         sun.on('mouseenter', () => {
             this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: #d79921">lithium</span>-rich`;
         });
@@ -124,7 +125,9 @@ class PaperMap extends StarMap {
         geometry.addChild(planets);
         let rotate_geos = new Map();
         let sq_co = true;
+        star.planets.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
         star.planets.forEach((planet) => {
+            resource_html = "";
             let planet_geometry = new Group([]);
             let orbit = new Path.Circle(loc, planet.orbit.radius);
             let sq = new Path.RegularPolygon(loc, 3, planet.orbit.radius);
@@ -140,7 +143,6 @@ class PaperMap extends StarMap {
             let base = new Path.Circle(p_loc, planet.size);
             base.fillColor = new Color('#444');
             let accu = 0;
-            let resource_html = "";
             planet.resources.forEach((resource) => {
                 let resource_geo = new Path.Circle(p_loc, planet.size + accu + 1);
                 planet_geometry.addChild(resource_geo);
@@ -234,6 +236,8 @@ class PaperMap extends StarMap {
         circ.on('mouseenter', () => {
             this.tooltip.text = `${star.name} system`;
         });
+
+
         geometry.on('mouseenter', () => {
             surround.opacity = 0;
             sun.visible = true;
