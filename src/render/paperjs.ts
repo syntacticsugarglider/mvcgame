@@ -163,12 +163,15 @@ class PaperMap extends StarMap {
             base.fillColor = new Color('#444');
             let accu = 0;
             planet.resources.forEach((resource) => {
-                let resource_geo = new Path.Circle(p_loc, planet.size + accu + 1);
-                planet_geometry.addChild(resource_geo);
+                let resource_geo = new Path.Circle(p_loc, planet.size + accu + 3);
+                planet_geometry.insertChild(0, resource_geo);
                 let rec;
                 if (resource == Resource.Petroleum) {
                     resource_geo.fillColor = new Color('#b16286');
                     rec = `<span style="color: #b16286">petroleum</span>`;
+                } else if (resource == Resource.Cellulose) {
+                    resource_geo.fillColor = new Color('#98971a');
+                    rec = `<span style="color: #98971a">cellulose</span>`;
                 }
                 if (accu == 0) {
                     if (planet.resources.length < 3) {
@@ -183,7 +186,7 @@ class PaperMap extends StarMap {
                 } else {
                     resource_html += `, and ${rec}`;
                 }
-                accu += 1;
+                accu += 3;
             });
             if (planet.resources.length == 0) {
                 resource_html = "barren";
