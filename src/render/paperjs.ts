@@ -144,6 +144,7 @@ class PaperMap extends StarMap {
         if (star.planets.length % 2 == 0) {
             sq_co = true;
         }
+        let planet_buffers = new Group();
         star.planets.forEach((planet) => {
             resource_html = "";
             let planet_geometry = new Group([]);
@@ -165,9 +166,12 @@ class PaperMap extends StarMap {
             }
 
             let planet_buffer = new Path.Circle(base.position!, max_moon_radius);
+
+
             planet_buffer.fillColor = new Color("fff");
-            planet_buffer.opacity = 0
-            geometry.addChild(planet_buffer);
+            planet_buffer.opacity = 0;
+            planet_buffers.addChild(planet_buffer);
+
             ordered_planet_geos.push(base);
             base.fillColor = new Color('#444');
             let accu = 0;
@@ -206,6 +210,7 @@ class PaperMap extends StarMap {
             sq.rotate(90, sq_centroid);
             let moon_idx = 0;
             let rec2 = "";
+            let moon_set = new Set(planet.moons);
             planet.moons.forEach(moon => {
                 let m_orbit = new Path.Circle(p_loc, moon.orbit.radius);
                 let m_loc = new Point(loc.x! + planet.orbit.radius + moon.orbit.radius, loc.y!);
@@ -221,19 +226,27 @@ class PaperMap extends StarMap {
                 }
                 moons.addChild(m_base);
                 h_geo.addChild(m_orbit);
-                if (moon_idx == 0) {
-                    if (planet.moons.length < 3) {
-                        rec2 += `${rec}`
-                    } else {
-                        rec2 += `${rec}, `
+                if (!rec2.includes(`${rec}`)) {
+                    if (moon_set.size < 3) {
+                        if (moon_idx == 0) {
+                            rec2 += `${rec}`
+                        }
+                        else {
+                            rec2 += ` and ${rec}`
+                        }
                     }
-                } else if (planet.moons.length == 2) {
-                    rec2 += ` and ${rec}`
-                } else if (accu < planet.moons.length - 1) {
-                    rec2 += `${rec}`;
-                } else {
-                    rec2 += `, and ${rec}`;
+
+                    if (moon_set.size >= 3) {
+                        if (moon_idx < planet.moons.length - 1) {
+                            rec2 += `${rec}, `
+                        }
+                        if (moon_idx == planet.moons.length - 1) {
+                            rec2 += `and ${rec}`
+                        }
+                    }
                 }
+
+
                 this.paper.view.on('frame', () => {
                     m_base.rotate(moon.orbit.speed / 10, base.position!);
                 });
@@ -264,9 +277,11 @@ class PaperMap extends StarMap {
         });
         geometry.addChild(h_geo);
         geometry.addChild(moons);
+        geometry.addChild(planet_buffers);
         planets.visible = false;
         moons.visible = false;
         h_geo.visible = false;
+        planet_buffers.visible = false;
         surround.fillColor = new Color('#111')
         circ.on('mouseenter', () => {
             this.tooltip.text = `${star.name} system`;
@@ -279,6 +294,7 @@ class PaperMap extends StarMap {
             sun.visible = true;
             this.tooltip.show();
             planets.visible = true;
+            planet_buffers.visible = true;
             h_geo.visible = true;
             moons.visible = true;
             circ.fillColor = new Color('#111');
@@ -311,6 +327,7 @@ class PaperMap extends StarMap {
             this.tooltip.hide();
         });
         geometry.on('mouseleave', () => {
+            planet_buffers.visible = false;
             surround.opacity = 1;
             sun.visible = false;
             circ.fillColor = new Color('#000');
