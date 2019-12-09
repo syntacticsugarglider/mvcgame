@@ -145,10 +145,9 @@ class PaperMap extends StarMap {
                 let resource_geo = new Path.Circle(p_loc, planet.size + accu + 1);
                 planet_geometry.addChild(resource_geo);
                 let rec;
-                switch (resource) {
-                    case Resource.Petroleum:
-                        resource_geo.fillColor = new Color('#b16286');
-                        rec = `<span style="color: #b16286">petroleum</span>`;
+                if (resource == Resource.Petroleum) {
+                    resource_geo.fillColor = new Color('#b16286');
+                    rec = `<span style="color: #b16286">petroleum</span>`;
                 }
                 if (accu == 0) {
                     if (planet.resources.length < 3) {
@@ -183,13 +182,13 @@ class PaperMap extends StarMap {
                 let m_base = new Path.Circle(m_loc, moon.size);
                 m_orbit.strokeColor = new Color('#555');
                 let rec;
-                switch (moon.resource) {
-                    case MoonResource.Silica:
-                        m_base.fillColor = new Color('#458588');
-                        rec = `<span style="color: #458588">silica</span>`;
-                    case MoonResource.Corundum:
-                        rec = `<span style="color: #698d6a">corundum</span>`;
-                        m_base.fillColor = new Color('#698d6a');
+                if (moon.resource == MoonResource.Silica) {
+                    m_base.fillColor = new Color('#458588');
+                    rec = `<span style="color: #458588">silica</span>`;
+                }
+                if (moon.resource == MoonResource.Corundum) {
+                    rec = `<span style="color: #698d6a">corundum</span>`;
+                    m_base.fillColor = new Color('#698d6a');
                 }
                 rotate_geos.set(moon, [m_base, m_orbit])
                 moons.addChild(m_base);
