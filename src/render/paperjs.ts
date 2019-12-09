@@ -212,7 +212,10 @@ class PaperMap extends StarMap {
                 });
                 moon_idx += 1;
             })
-            if (planet.moons.length == 1) {
+            if (planet.moons.length == 0) {
+
+            }
+            else if (planet.moons.length = 1) {
                 resource_html += `\nmoon abounds with ${rec2}`;
             } else {
                 resource_html += `\nmoons abound with ${rec2}`
