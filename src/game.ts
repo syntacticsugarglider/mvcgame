@@ -1,6 +1,22 @@
-import { Render, System, Resource, MoonResource } from './render/render';
+import { Render, System, Resource, MoonResource, Moon } from './render/render';
 import { Content, Updater, Ship, Point, ContentType } from './scene';
 import { Bar } from "./ui";
+
+var vowels = ['a', 'e', 'i', 'o', 'u'];
+var consts = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'qu', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z', 'tt', 'ch', 'sh'];
+
+function word(len: number): string {
+    var word = '';
+    var is_vowel = false;
+    var arr;
+    for (var i = 0; i < len; i++) {
+        if (is_vowel) arr = vowels
+        else arr = consts
+        is_vowel = !is_vowel;
+        word += arr[Math.round(Math.random() * (arr.length - 1))];
+    }
+    return word;
+}
 
 export class Game {
     scene: Render;
@@ -68,52 +84,61 @@ export function handle_pan(scene: Render) {
     });
 }
 
+function weighted_list<T>(list: [T, number][]): T[] {
+    var weighted_list = [];
+
+    for (var i = 0; i < list.length; i++) {
+        var multiples = list[i][1] * 100;
+        for (var j = 0; j < multiples; j++) {
+            weighted_list.push(list[i][0]);
+        }
+    }
+
+    return weighted_list;
+}
+
+function rand(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function select_random<T>(list: T[]): T {
+    return list[rand(0, list.length - 1)];
+}
+
+function generate_system(): System {
+    let system = new System(new Point(0, 0), word(rand(3, 8)));
+    let count_options: [number, number][] = [[1, 5], [2, 4], [3, 3]];
+    let planet_count = select_random(weighted_list(count_options));
+    for (let i = 0; i < planet_count; i++) {
+        let count_options: [number, number][] = [[0, 5], [2, 2], [3, 2], [4, 1]];
+        let moon_count = select_random(weighted_list(count_options));
+        let planet = {
+            orbit: { radius: rand(50, 120), speed: rand(-10, 10) },
+            name: word(rand(3, 8)),
+            position: 0,
+            size: rand(10, 20),
+            resources: [],
+            moons: [] as Moon[],
+        };
+        for (let i = 0; i < moon_count; i++) {
+            let size = rand(2, 5);
+            planet.moons.push({
+                orbit: { radius: rand(5, 10) + size + planet.size, speed: rand(-5, 5) },
+                size: size,
+                position: 0,
+                resource: MoonResource.Corundum
+            });
+        }
+        system.planets.push(planet);
+    }
+    return system;
+}
+
 export function initialize(game: Game) {
     let map = game.scene.new_map();
 
-    let sol = new System(new Point(0, 0), "sol");
-    sol.planets.push({
-        name: "yum cimil",
-        orbit: {
-            radius: 70,
-            speed: 5
-        }, position: 0, size: 5,
-        resources: [Resource.Petroleum],
-        moons: [{
-            orbit: {
-                radius: 15,
-                speed: -2
-            },
-            position: 0,
-            size: 1,
-            resource: MoonResource.Silica,
-        }, {
-            orbit: {
-                radius: 10,
-                speed: 0.5
-            },
-            position: 0,
-            size: 2,
-            resource: MoonResource.Corundum,
-        }]
-    });
-    sol.planets.push({
-        name: "chaac",
-        orbit: {
-            radius: 120,
-            speed: -10
-        }, position: 0, size: 10,
-        resources: [],
-        moons: [{
-            orbit: {
-                radius: 15,
-                speed: -4
-            },
-            position: 0,
-            size: 1,
-            resource: MoonResource.Silica,
-        }]
-    });
+    let sol = generate_system();
+
     map.add(sol);
 
     handle_pan(game.scene);
