@@ -5,7 +5,25 @@ import { Bar } from "./ui";
 var vowels = ['a', 'e', 'i', 'o', 'u'];
 var consts = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'qu', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z', 'tt', 'ch', 'sh'];
 
-function word(len: number): string {
+class RandomProvider {
+    private seed: number;
+
+    constructor(seed: number) {
+        this.seed = seed;
+    }
+
+    random(): number {
+        this.seed = ((this.seed + 0x7ED55D16) + (this.seed << 12)) & 0xFFFFFFFF;
+        this.seed = ((this.seed ^ 0xC761C23C) ^ (this.seed >>> 19)) & 0xFFFFFFFF;
+        this.seed = ((this.seed + 0x165667B1) + (this.seed << 5)) & 0xFFFFFFFF;
+        this.seed = ((this.seed + 0xD3A2646C) ^ (this.seed << 9)) & 0xFFFFFFFF;
+        this.seed = ((this.seed + 0xFD7046C5) + (this.seed << 3)) & 0xFFFFFFFF;
+        this.seed = ((this.seed ^ 0xB55A4F09) ^ (this.seed >>> 16)) & 0xFFFFFFFF;
+        return (this.seed & 0xFFFFFFF) / 0x10000000;
+    }
+}
+
+function word(len: number, source: RandomProvider): string {
     var word = '';
     var is_vowel = false;
     var arr;
@@ -13,7 +31,7 @@ function word(len: number): string {
         if (is_vowel) arr = vowels
         else arr = consts
         is_vowel = !is_vowel;
-        word += arr[Math.round(Math.random() * (arr.length - 1))];
+        word += arr[Math.round(source.random() * (arr.length - 1))];
     }
     return word;
 }
@@ -97,33 +115,48 @@ function weighted_list<T>(list: [T, number][]): T[] {
     return weighted_list;
 }
 
-function rand(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+function rand(min: number, max: number, source: RandomProvider) {
+    return Math.floor(source.random() * (max - min + 1)) + min;
 }
 
-function select_random<T>(list: T[]): T {
-    return list[rand(0, list.length - 1)];
+function select_random<T>(list: T[], source: RandomProvider): T {
+    return list[rand(0, list.length - 1, source)];
 }
 
-function generate_system(): System {
-    let system = new System(new Point(0, 0), word(rand(3, 8)));
+function hash(item: string): number {
+    var hash = 0, i, chr;
+    if (item.length === 0) return hash;
+    for (i = 0; i < item.length; i++) {
+        chr = item.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0;
+    }
+    return hash;
+}
+
+function generate_system(b_source: RandomProvider): System {
+    let location = new Point(rand(-1000, 1000, b_source), rand(-1000, 1000, b_source));
+    let seed = hash(`${location.x}${location.y}`);
+    let source = new RandomProvider(seed);
+    let system = new System(new Point(0, 0), word(rand(3, 8, source), source));
+    system.location = location;
     let count_options: [number, number][] = [[1, 5], [2, 4], [3, 3]];
-    let planet_count = select_random(weighted_list(count_options));
+    let planet_count = select_random(weighted_list(count_options), source);
     for (let i = 0; i < planet_count; i++) {
         let count_options: [number, number][] = [[0, 5], [2, 2], [3, 2], [4, 1]];
-        let moon_count = select_random(weighted_list(count_options));
+        let moon_count = select_random(weighted_list(count_options), source);
         let planet = {
-            orbit: { radius: rand(50, 120), speed: rand(-10, 10) },
-            name: word(rand(3, 8)),
+            orbit: { radius: rand(50, 120, source), speed: rand(-10, 10, source) },
+            name: word(rand(3, 8, source), source),
             position: 0,
-            size: rand(10, 20),
+            size: rand(10, 20, source),
             resources: [],
             moons: [] as Moon[],
         };
         for (let i = 0; i < moon_count; i++) {
-            let size = rand(2, 5);
+            let size = rand(2, 5, source);
             planet.moons.push({
-                orbit: { radius: rand(5, 10) + size + planet.size, speed: rand(-5, 5) },
+                orbit: { radius: rand(5, 10, source) + size + planet.size, speed: rand(-5, 5, source) },
                 size: size,
                 position: 0,
                 resource: MoonResource.Corundum
@@ -137,10 +170,11 @@ function generate_system(): System {
 export function initialize(game: Game) {
     let map = game.scene.new_map();
 
-    let sol = generate_system();
-
-    map.add(sol);
-
+    let random_source = new RandomProvider(0x2F9E2B1);
+    for (let i = 0; i < 100; i++) {
+        let system = generate_system(random_source);
+        map.add(system);
+    }
     handle_pan(game.scene);
 
     game.scene.show_map(map);
