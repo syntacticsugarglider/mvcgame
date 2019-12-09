@@ -344,9 +344,7 @@ class PaperMap extends StarMap {
             sq4.rotate(1.2, sq4_centroid);
             sq8.rotate(0.05);
             sq9.rotate(0.1);
-            let p_idx = 0;
             star.planets.forEach((planet) => {
-                p_idx += 1;
                 planet.position += planet.orbit.speed / 50;
                 planet.moons.forEach((moon) => {
                     moon.position = (moon.position + moon.orbit.speed / 50) % 360;
