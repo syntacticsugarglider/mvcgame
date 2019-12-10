@@ -123,8 +123,8 @@ class PaperMap extends StarMap {
         let sq_target = 0;
         let sq11 = new Path.Arc(loc.add(new Point(0, 150)), loc.add(new Point(150, 0)), loc.subtract(new Point(0, 150)));
         let sq12 = new Path.Circle(loc, 25);
-        sq12.strokeColor = new Color("#fff")
-        sq12.strokeWidth = 1;
+        sq12.strokeColor = new Color("#eee")
+        sq12.strokeWidth = 2;
 
         sq11.strokeWidth = 2;
 
