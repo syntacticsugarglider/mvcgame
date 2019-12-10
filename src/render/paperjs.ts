@@ -122,18 +122,15 @@ class PaperMap extends StarMap {
             if (!jumping) {
                 return;
             }
-            let target = sq_target - 90;
+            let target = (sq_target - 90) % 360;
             sq_group.clipped = false;
             sq_group.remove();
             sq11.remove();
-            if (sq_target < 180) {
-                sq11 = new Path.Arc(loc.add(new Point(0, arc_rad)), loc.add(new Point(0, -arc_rad)), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)), arc_rad * Math.sin(target * (Math.PI / 180)))));
-            } else {
-                sq11 = new Path.Arc(loc.add(new Point(0, -arc_rad)), loc.add(new Point(0, arc_rad)), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)), arc_rad * Math.sin(target * (Math.PI / 180)))));
-            }
+
+            sq11 = new Path.Arc(loc.add(new Point(0, -arc_rad)), loc.add(new Point(arc_rad * Math.cos((target - 90) / 2 * (Math.PI / 180)), arc_rad * Math.sin((target - 90) / 2 * (Math.PI / 180)))), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)), arc_rad * Math.sin(target * (Math.PI / 180)))));
+
             sq11.strokeWidth = 2;
             sq11.strokeColor = new Color('#eee');
-            sq_group = new Group([clip, sq11])
             sq_target += incr;
             if (sq_target - incr < 0) {
                 jumping = false;
@@ -146,9 +143,6 @@ class PaperMap extends StarMap {
                 return;
             }
             sq_target = sq_target % 360;
-            if (sq_target < 180) {
-                sq_group.clipped = true;
-            }
         });
         let sq2_centroid = centroid(sq2);
         let sq3_centroid = centroid(sq3);
