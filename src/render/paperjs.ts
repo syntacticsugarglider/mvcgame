@@ -116,7 +116,7 @@ class PaperMap extends StarMap {
         let sq_group = new Group([clip, sq11])
         sq_group.clipped = true;
         let jumping = false;
-        let incr = 2;
+        let incr = 3;
         let arc_rad = 25;
         this.paper.view.on('frame', () => {
             if (!jumping) {
@@ -330,9 +330,11 @@ class PaperMap extends StarMap {
         });
 
         sun.on('mousedown', () => {
-            incr = 2;
+            incr = 3;
             jumping = true;
-            sq_target = 0;
+            if (sq_target % 360 < incr) {
+                sq_target = 0;
+            }
         });
         sun.on('mouseup', () => {
             incr = -4;
