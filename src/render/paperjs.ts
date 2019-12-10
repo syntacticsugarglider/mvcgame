@@ -201,6 +201,7 @@ class PaperMap extends StarMap {
             }
             let p_loc = new Point(loc.x! + planet.orbit.radius, loc.y!);
             let base = new Path.Circle(p_loc, planet.size);
+            planet.moons.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
             let max_moon_radius = 0
             if (planet.moons.length > 0) {
                 max_moon_radius = (planet.moons[planet.moons.length - 1]).orbit.radius
@@ -355,17 +356,6 @@ class PaperMap extends StarMap {
         });
 
 
-        // geometry.on('mousemove', (event: MouseEvent) => {
-        //     console.log(event.delta);
-        //     star.planets.forEach((planet) => {
-        //         planet.moons.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
-        //         let max_buffer = (planet.moons[planet.moons.length - 1]).orbit.radius;
-        //         let star_dist = (event.clientX - loc.x!) ** 2 + (event.clientY - loc.y!) ** 2;
-        //         if (star_dist <= ((planet.orbit.radius + max_buffer) ** 2) && (star_dist >= ((planet.orbit.radius - max_buffer) ** 2))) {
-        //             this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
-        //         }
-        //     });
-        // })
 
 
         this.scene.addChildren([geometry]);
