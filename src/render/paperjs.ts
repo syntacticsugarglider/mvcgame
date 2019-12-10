@@ -136,7 +136,7 @@ class PaperMap extends StarMap {
                 if (this.current_system != star) {
                     star.active = false;
                     was_active = true;
-                    sq12.remove();
+                    sq12.visible = false;
                     circ.fillColor = new Color('#000');
 
                 }
@@ -163,6 +163,7 @@ class PaperMap extends StarMap {
                 was_active = false;
                 sq11.remove();
                 sq12.visible = true;
+                sq12.bringToFront();
                 surround.strokeColor = new Color('#777');
                 surround.fillColor = new Color('#111');
 
@@ -350,10 +351,12 @@ class PaperMap extends StarMap {
         geometry.addChild(h_geo);
         geometry.addChild(moons);
         geometry.addChild(planet_buffers);
+        geometry.addChild(sq12);
         planets.visible = false;
         moons.visible = false;
         h_geo.visible = false;
         planet_buffers.visible = false;
+        sq12.visible = false;
         surround.fillColor = new Color('#111');
         circ.on('mouseenter', () => {
             this.tooltip.text = `${star.name} system`;
@@ -370,6 +373,7 @@ class PaperMap extends StarMap {
             incr = -4;
         });
         geometry.on('mouseenter', () => {
+
             geometry.bringToFront()
             surround.opacity = 0;
             sun.visible = true;
@@ -378,16 +382,14 @@ class PaperMap extends StarMap {
             planet_buffers.visible = true;
             h_geo.visible = true;
             moons.visible = true;
+
             circ.fillColor = new Color('#111');
             sun.bringToFront();
             planets.bringToFront();
             moons.bringToFront();
             if (star.active) {
                 sq12.visible = true;
-            }
-            if (was_active) {
-
-                sq12.visible = true;
+                sq12.bringToFront()
             }
             planet_buffers.bringToFront();
             circ.scale(10);
