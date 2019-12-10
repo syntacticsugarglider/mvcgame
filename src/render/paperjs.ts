@@ -123,10 +123,10 @@ class PaperMap extends StarMap {
         let sq_target = 0;
         let sq11 = new Path.Arc(loc.add(new Point(0, 150)), loc.add(new Point(150, 0)), loc.subtract(new Point(0, 150)));
         let sq12 = new Path.Circle(loc, 25);
-        sq12.strokeColor = new Color("#eee")
-        sq12.strokeWidth = 2;
+        sq12.strokeColor = new Color("#aaa")
+        sq12.strokeWidth = 3;
 
-        sq11.strokeWidth = 2;
+        sq11.strokeWidth = 3;
 
         let clip = new Path.Rectangle(new Rectangle(loc.subtract(new Point(0, 160)), new Size(160, 320)));
         let sq_group = new Group([clip, sq11])
@@ -154,8 +154,8 @@ class PaperMap extends StarMap {
 
             sq11 = new Path.Arc(loc.add(new Point(0, -arc_rad)), loc.add(new Point(arc_rad * Math.cos((target - 90) / 2 * (Math.PI / 180)), arc_rad * Math.sin((target - 90) / 2 * (Math.PI / 180)))), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)), arc_rad * Math.sin(target * (Math.PI / 180)))));
 
-            sq11.strokeWidth = 2;
-            sq11.strokeColor = new Color('#eee');
+            sq11.strokeWidth = 3;
+            sq11.strokeColor = new Color('#aaa');
             sq_target += incr;
             if (sq_target - incr < 0) {
                 jumping = false;
