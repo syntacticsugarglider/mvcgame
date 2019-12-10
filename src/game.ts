@@ -192,9 +192,12 @@ function generate_system(b_source: RandomProvider): System {
 }
 
 export function initialize(game: Game) {
-    let map = game.scene.new_map();
+    let sol = new System(new Point(0, 0), 'sol', StarResource.Lithium);
+    sol.active = true;
+    let map = game.scene.new_map(sol);
 
     let random_source = new RandomProvider(0x2F9E2B1);
+
     for (let i = 0; i < 100; i++) {
         let system = generate_system(random_source);
         map.add(system);

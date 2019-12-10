@@ -58,12 +58,14 @@ export class System {
     name: string;
     planets: Planet[];
     star: Star;
+    active: boolean;
 
     constructor(location: Point, name: string, resource: StarResource) {
         this.location = location;
         this.star = { name: name, resource: resource };
         this.name = name;
         this.planets = [];
+        this.active = false;
     }
 }
 
@@ -91,6 +93,6 @@ export abstract class Render {
     }
     abstract add(geometry: Content): void;
     abstract show_map(map: StarMap): void;
-    abstract new_map(): StarMap;
+    abstract new_map(sol: System): StarMap;
     abstract use_tooltip(tooltip: Tooltip): void;
 }

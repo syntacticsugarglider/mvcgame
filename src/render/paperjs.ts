@@ -3,6 +3,7 @@ import { Content, ContentType, Ship } from '../scene';
 import { Tooltip } from '../ui';
 
 import { PaperScope, Matrix, Point, Path, Color, Group, PointText, Tween, Rectangle, Size } from 'paper';
+import { start } from 'repl';
 
 export class PaperJS extends Render {
     private paper: PaperScope;
@@ -49,8 +50,10 @@ export class PaperJS extends Render {
         (map as PaperMap).scene.visible = true;
     }
 
-    new_map(): StarMap {
-        return new PaperMap(this.paper, this.tooltip!);
+    new_map(sol: System): StarMap {
+        let sol_map = new PaperMap(this.paper, this.tooltip!, sol)
+        sol_map.add(sol)
+        return sol_map;
     }
 
     use_tooltip(tooltip: Tooltip): void {
@@ -70,12 +73,14 @@ class PaperMap extends StarMap {
     private paper: PaperScope;
     scene: Group;
     private tooltip: Tooltip;
+    private current_system: System;
 
-    constructor(paper: PaperScope, tooltip: Tooltip) {
+    constructor(paper: PaperScope, tooltip: Tooltip, sol: System) {
         super();
         this.scene = new Group();
         this.paper = paper;
         this.tooltip = tooltip;
+        this.current_system = sol;
     }
 
     hide(): void {
@@ -89,8 +94,14 @@ class PaperMap extends StarMap {
         circ.strokeColor = new Color('#777');
         circ.fillColor = new Color('#000');
         let surround = new Path.RegularPolygon(loc, 9, 11);
-        surround.strokeColor = new Color('#777');
-        surround.fillColor = new Color('#000');
+        let was_active = false;
+        if (star.active) {
+            circ.fillColor = new Color('#444');
+            surround.strokeColor = new Color('#777');
+            surround.fillColor = new Color('#111');
+        }
+
+
         label.fillColor = new Color('#999');
         label.justification = 'center';
         label.content = star.name;
@@ -111,7 +122,12 @@ class PaperMap extends StarMap {
         let sq10 = new Path.Circle(loc, 7);
         let sq_target = 0;
         let sq11 = new Path.Arc(loc.add(new Point(0, 150)), loc.add(new Point(150, 0)), loc.subtract(new Point(0, 150)));
-        sq11.strokeWidth = 5;
+        let sq12 = new Path.Circle(loc, 25);
+        sq12.strokeColor = new Color("#fff")
+        sq12.strokeWidth = 1;
+
+        sq11.strokeWidth = 2;
+
         let clip = new Path.Rectangle(new Rectangle(loc.subtract(new Point(0, 160)), new Size(160, 320)));
         let sq_group = new Group([clip, sq11])
         sq_group.clipped = true;
@@ -119,7 +135,16 @@ class PaperMap extends StarMap {
         let incr = 3;
         let arc_rad = 25;
         this.paper.view.on('frame', () => {
-            if (!jumping) {
+            if (!was_active && star.active) {
+                if (this.current_system != star) {
+                    star.active = false;
+                    was_active = true;
+                    sq12.remove();
+                    circ.fillColor = new Color('#000');
+
+                }
+            }
+            if (!jumping || star.active) {
                 return;
             }
             let target = (sq_target - 90) % 360;
@@ -138,9 +163,15 @@ class PaperMap extends StarMap {
                 return;
             }
             if (sq_target + incr > 360) {
+                this.current_system = star;
                 jumping = false;
+                star.active = true;
                 sq11.remove();
-                return;
+                sq12.visible = true;
+                surround.strokeColor = new Color('#777');
+                surround.fillColor = new Color('#111');
+
+                return
             }
             sq_target = sq_target % 360;
         });
@@ -174,6 +205,7 @@ class PaperMap extends StarMap {
         sq7.fillColor = new Color(s_resource_color);
         sq10.fillColor = new Color(s_resource_color);
         sun.visible = false;
+        sq12.visible = false;
         let h_geo = new Group();
         let geometry = new Group([circ, surround, sun]);
         let planets = new Group();
@@ -327,7 +359,7 @@ class PaperMap extends StarMap {
         moons.visible = false;
         h_geo.visible = false;
         planet_buffers.visible = false;
-        surround.fillColor = new Color('#111')
+        surround.fillColor = new Color('#111');
         circ.on('mouseenter', () => {
             this.tooltip.text = `${star.name} system`;
         });
@@ -355,6 +387,13 @@ class PaperMap extends StarMap {
             sun.bringToFront();
             planets.bringToFront();
             moons.bringToFront();
+            if (star.active) {
+                sq12.visible = true;
+            }
+            if (was_active) {
+
+                sq12.visible = true;
+            }
             planet_buffers.bringToFront();
             circ.scale(10);
         });
@@ -363,6 +402,7 @@ class PaperMap extends StarMap {
             this.tooltip.hide();
             sq11.remove();
             jumping = false;
+            sq12.visible = false;
         });
 
 
@@ -377,6 +417,9 @@ class PaperMap extends StarMap {
             surround.opacity = 1;
             sun.visible = false;
             circ.fillColor = new Color('#000');
+            if (star.active) {
+                circ.fillColor = new Color('#444');
+            }
             planets.visible = false;
             h_geo.visible = false;
             moons.visible = false;
