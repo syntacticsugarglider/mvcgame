@@ -128,9 +128,6 @@ class PaperMap extends StarMap {
 
         sq11.strokeWidth = 3;
 
-        let clip = new Path.Rectangle(new Rectangle(loc.subtract(new Point(0, 160)), new Size(160, 320)));
-        let sq_group = new Group([clip, sq11])
-        sq_group.clipped = true;
         let jumping = false;
         let incr = 3;
         let arc_rad = 25;
@@ -148,11 +145,8 @@ class PaperMap extends StarMap {
                 return;
             }
             let target = (sq_target - 90) % 360;
-            sq_group.clipped = false;
-            sq_group.remove();
             sq11.remove();
-
-            sq11 = new Path.Arc(loc.add(new Point(0, -arc_rad)), loc.add(new Point(arc_rad * Math.cos((target - 90) / 2 * (Math.PI / 180)), arc_rad * Math.sin((target - 90) / 2 * (Math.PI / 180)))), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)), arc_rad * Math.sin(target * (Math.PI / 180)))));
+            sq11 = new Path.Arc(loc.add(new Point(0, -arc_rad)), loc.add(new Point(arc_rad * Math.cos((target - 90) / 2 * (Math.PI / 180)), arc_rad * Math.sin((target - 90) / 2 * (Math.PI / 180)))), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)) + 0.00001, arc_rad * Math.sin(target * (Math.PI / 180)))));
 
             sq11.strokeWidth = 3;
             sq11.strokeColor = new Color('#aaa');
