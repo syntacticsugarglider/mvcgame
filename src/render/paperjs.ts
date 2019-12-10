@@ -356,6 +356,8 @@ class PaperMap extends StarMap {
 
         geometry.on('mouseleave', () => {
             this.tooltip.hide();
+            sq11.remove();
+            jumping = false;
         });
 
 
