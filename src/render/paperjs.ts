@@ -186,6 +186,7 @@ class PaperMap extends StarMap {
             sq_co = true;
         }
         let planet_buffers = new Group();
+        let planet_texts = new Map();
         star.planets.forEach((planet) => {
             resource_html = "";
             let planet_geometry = new Group([]);
@@ -202,7 +203,7 @@ class PaperMap extends StarMap {
             let p_loc = new Point(loc.x! + planet.orbit.radius, loc.y!);
             let base = new Path.Circle(p_loc, planet.size);
             planet.moons.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
-            let max_moon_radius = 0
+            let max_moon_radius = planet.size;
             if (planet.moons.length > 0) {
                 max_moon_radius = (planet.moons[planet.moons.length - 1]).orbit.radius
             }
@@ -292,9 +293,6 @@ class PaperMap extends StarMap {
                 this.paper.view.on('frame', () => {
                     m_base.rotate(moon.orbit.speed / 10, base.position!);
                 });
-                m_orbit.on('mouseenter', () => {
-                    this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
-                });
                 planet_geometry.addChildren([m_orbit, m_base]);
                 moon_idx += 1;
             })
@@ -304,9 +302,11 @@ class PaperMap extends StarMap {
             } else if (planet.moons.length != 0) {
                 resource_html += `\nmoons abound with ${rec2}`
             }
-            planet_geometry.on('mouseenter', () => {
-                this.tooltip.text = `<span class="content">${planet.name}</span>\n${resource_html}`;
+            planet_texts.set(planet, resource_html);
+            planet_buffer.on('mouseenter', () => {
+                this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}`;
             });
+
             planet_geometry.addChild(base);
             this.paper.view.on('frame', () => {
                 planet_geometry.rotate(planet.orbit.speed / 50, loc);
@@ -348,6 +348,7 @@ class PaperMap extends StarMap {
             sun.bringToFront();
             planets.bringToFront();
             moons.bringToFront();
+            planet_buffers.bringToFront();
             circ.scale(10);
         });
 
