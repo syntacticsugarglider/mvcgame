@@ -332,6 +332,7 @@ class PaperMap extends StarMap {
         sun.on('mousedown', () => {
             incr = 2;
             jumping = true;
+            sq_target = 0;
         });
         sun.on('mouseup', () => {
             incr = -4;
