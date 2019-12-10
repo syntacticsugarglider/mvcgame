@@ -165,6 +165,9 @@ class PaperMap extends StarMap {
         sun.on('mouseenter', () => {
             this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to jump`;
         });
+        sun.on('mouseleave', () => {
+            sq_target = 0;
+        });
         sun.strokeColor = new Color('#444');
         sq6.fillColor = new Color('#111');
         sq7.strokeWidth = 0;
