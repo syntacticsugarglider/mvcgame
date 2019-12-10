@@ -153,8 +153,11 @@ class PaperMap extends StarMap {
         let sq2_centroid = centroid(sq2);
         let sq3_centroid = centroid(sq3);
         let sq4_centroid = centroid(sq4);
+        let sq_zone = new Path.Circle(loc, 25);
+        sq_zone.fillColor = new Color("fff");
+        sq_zone.opacity = 0;
         sq5.fillColor = new Color('#444');
-        let sun = new Group([sq1, sq2, sq3, sq4, sq5, sq6, sq10]);
+        let sun = new Group([sq1, sq2, sq3, sq4, sq5, sq6, sq10, sq_zone]);
         let resource_html = "";
         let s_resource_name = "";
         let s_resource_color = "";
@@ -200,6 +203,9 @@ class PaperMap extends StarMap {
                 sq.fillColor = new Color('#000');
                 sq_co = true;
             }
+            sq.on("mouseenter", () => {
+                this.tooltip.text = `${star.name} system`;
+            });
             let p_loc = new Point(loc.x! + planet.orbit.radius, loc.y!);
             let base = new Path.Circle(p_loc, planet.size);
             planet.moons.sort((n1, n2) => n1.orbit.radius - n2.orbit.radius);
@@ -328,6 +334,7 @@ class PaperMap extends StarMap {
         circ.on('mouseenter', () => {
             this.tooltip.text = `${star.name} system`;
         });
+
         sun.on('mousedown', () => {
             incr = 2;
             jumping = true;
