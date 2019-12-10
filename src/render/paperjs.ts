@@ -160,6 +160,7 @@ class PaperMap extends StarMap {
                 this.current_system = star;
                 jumping = false;
                 star.active = true;
+                was_active = false;
                 sq11.remove();
                 sq12.visible = true;
                 surround.strokeColor = new Color('#777');
