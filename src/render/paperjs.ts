@@ -317,7 +317,7 @@ class PaperMap extends StarMap {
                 if (current_growing_planet != planet) {
                     sq_target = 0;
                 }
-                if (current_planet == planet) {
+                if (current_planet == planet && on_planet) {
                     return
                 }
                 incr = 3;
