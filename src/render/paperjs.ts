@@ -127,6 +127,7 @@ class PaperMap extends StarMap {
         let sq12 = new Path.Circle(loc, 25);
         let sq13 = new Path.Circle(loc, 1);
         let sq14 = new Path.Arc(loc.add(new Point(0, 150)), loc.add(new Point(150, 0)), loc.subtract(new Point(0, 150)));
+        let current_growing_planet: Planet;
         let current_planet: Planet;
         sq13.strokeColor = new Color("#aaa")
         sq13.strokeWidth = 3;
@@ -137,7 +138,7 @@ class PaperMap extends StarMap {
 
         let jumping = false;
         let planet_loc = new Point(0, 0);
-
+        let growing = false;
         let on_planet = false;
         let incr = 3;
         let arc_rad = 25;
@@ -148,7 +149,7 @@ class PaperMap extends StarMap {
             if (this.current_system != star) {
                 on_planet = false;
             }
-            if (!on_planet || temp_sun) {
+            if (!growing || temp_sun) {
                 if (!was_active && star.active) {
                     if (this.current_system != star) {
                         star.active = false;
@@ -169,6 +170,7 @@ class PaperMap extends StarMap {
                 sq14.visible = true;
                 sq_target += incr;
                 if (sq_target - incr < 0) {
+                    temp_sun = false;
                     jumping = false;
                     sq14.remove();
                     return;
@@ -181,6 +183,7 @@ class PaperMap extends StarMap {
                     this.on_planet = false;
                     on_planet = false;
                     temp_sun = false;
+
                     sq14.remove();
                     sq13.visible = false;
                     sq12.visible = true;
@@ -196,10 +199,9 @@ class PaperMap extends StarMap {
                 if (!jumping || !star.active) {
                     return;
                 }
-                planet_radius = current_planet.size + current_planet.resources.length * 3 + 1;
+                planet_radius = current_growing_planet.size + current_growing_planet.resources.length * 3 + 1;
                 let target = (sq_target - 90) % 360;
-                sq13.rotate(current_planet.orbit.speed / 50, loc);
-                planet_loc = planet_loc.rotate(current_planet.orbit.speed / 50, loc);
+                planet_loc = planet_loc.rotate(current_growing_planet.orbit.speed / 50, loc);
                 sq11.remove();
                 sq11 = new Path.Arc(planet_loc.add(new Point(0, -planet_radius)), planet_loc.add(new Point(planet_radius * Math.cos((target - 90) / 2 * (Math.PI / 180)), planet_radius * Math.sin((target - 90) / 2 * (Math.PI / 180)))), planet_loc.add(new Point(planet_radius * Math.cos(target * (Math.PI / 180)) + 0.00001, planet_radius * Math.sin(target * (Math.PI / 180)))));
 
@@ -208,17 +210,21 @@ class PaperMap extends StarMap {
                 sq_target += incr;
                 if (sq_target - incr < 0) {
                     jumping = false;
-                    this.on_planet = false;
-                    on_planet = false;
+                    growing = false;
                     sq11.remove();
                     return;
                 }
                 if (sq_target + incr > 360) {
+                    this.on_planet = true;
                     jumping = false;
                     sq11.remove();
                     sq12.visible = false;
+                    sq13.scale(scaler);
                     sq13.scale(planet_radius);
+                    current_planet = current_growing_planet;
                     scaler = 1 / planet_radius;
+                    growing = false;
+                    on_planet = true;
                     sq13.position = planet_loc;
                     sq13.visible = true;
                     sq13.bringToFront();
@@ -308,20 +314,21 @@ class PaperMap extends StarMap {
             ordered_planet_geos.push(base);
             base.fillColor = new Color('#444');
             planet_buffer.on('mousedown', () => {
-                if (current_planet != planet) {
-                    sq13.visible = false;
+                if (current_growing_planet != planet) {
+                    sq_target = 0;
+                }
+                if (current_planet == planet) {
+                    return
                 }
                 incr = 3;
-                if (!star.active || (current_planet == planet && on_planet)) {
+                if (!star.active) {
                     return;
                 }
                 jumping = true;
-                this.on_planet = true;
-                on_planet = true;
-                sq13.scale(scaler);
-                scaler = 1;
+                growing = true;
+
                 planet_loc = base.position!;
-                current_planet = planet;
+                current_growing_planet = planet;
 
                 if (sq_target % 360 < incr) {
                     sq_target = 0;
@@ -460,6 +467,10 @@ class PaperMap extends StarMap {
             if (sq_target % 360 < incr) {
                 sq_target = 0;
             }
+            if (sq11.visible) {
+                sq11.visible = false;
+                sq_target = 0;
+            }
         });
         sun.on('mouseup', () => {
             incr = -4;
@@ -496,7 +507,6 @@ class PaperMap extends StarMap {
         geometry.on('mouseleave', () => {
             this.tooltip.hide();
 
-            sq12.visible = false;
 
             sq13.visible = false;
         });
@@ -522,6 +532,8 @@ class PaperMap extends StarMap {
             moons.visible = false;
             sun.sendToBack();
             circ.scale(1 / 10);
+            sq12.visible = false;
+
         });
         this.paper.view.on('frame', () => {
 
