@@ -176,6 +176,7 @@ class PaperMap extends StarMap {
                     return;
                 }
                 if (sq_target + incr > 360) {
+                    this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich`;
                     this.current_system = star;
                     jumping = false;
                     star.active = true;
@@ -222,6 +223,7 @@ class PaperMap extends StarMap {
                     sq13.scale(scaler);
                     sq13.scale(planet_radius);
                     current_planet = current_growing_planet;
+                    this.tooltip.text = `<span class="content">${current_planet.name}</span>\n${planet_texts.get(current_planet)}`;
                     scaler = 1 / planet_radius;
                     growing = false;
                     on_planet = true;
@@ -255,6 +257,15 @@ class PaperMap extends StarMap {
         }
         sun.on('mouseenter', () => {
             this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to jump`;
+            if (star.active) {
+                if (on_planet) {
+                    this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to travel`;
+                }
+                else {
+                    this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich`;
+                }
+            }
+
         });
         sun.on('mouseleave', () => {
             sq_target = 0;
@@ -425,7 +436,12 @@ class PaperMap extends StarMap {
             }
             planet_texts.set(planet, resource_html);
             planet_buffer.on('mouseenter', () => {
-                this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}`;
+                if (planet == current_planet && on_planet) {
+                    this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}`;
+                }
+                else {
+                    this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\nlong press to travel`;
+                }
             });
 
             planet_geometry.addChild(base);
