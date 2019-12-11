@@ -145,6 +145,46 @@ class PaperMap extends StarMap {
         let scaler = 1;
         let planet_radius = 0;
         let temp_sun = false;
+        let mouseenter = () => {
+            geometry.bringToFront()
+            surround.opacity = 0;
+            sun.visible = true;
+            this.tooltip.show();
+            planets.visible = true;
+            planet_buffers.visible = true;
+            h_geo.visible = true;
+            moons.visible = true;
+            circ.fillColor = new Color('#111');
+            sun.bringToFront();
+            planets.bringToFront();
+            moons.bringToFront();
+            if (star.active && !on_planet) {
+                sq12.visible = true;
+                sq12.bringToFront();
+            }
+            if (on_planet) {
+                sq13.visible = true;
+                sq12.bringToFront();
+            }
+            planet_buffers.bringToFront();
+            circ.scale(10);
+        };
+        let mouseleave = () => {
+            planet_buffers.visible = false;
+            surround.opacity = 1;
+            sun.visible = false;
+            circ.fillColor = new Color('#000');
+            if (star.active) {
+                circ.fillColor = new Color('#444');
+            }
+            planets.visible = false;
+            h_geo.visible = false;
+            moons.visible = false;
+            sun.sendToBack();
+            circ.scale(1 / 10);
+            sq12.visible = false;
+
+        };
         this.paper.view.on('frame', () => {
             if (this.current_system != star) {
                 on_planet = false;
@@ -165,6 +205,8 @@ class PaperMap extends StarMap {
                 let target = (sq_target - 90) % 360;
                 sq14.remove();
                 sq14 = new Path.Arc(loc.add(new Point(0, -arc_rad)), loc.add(new Point(arc_rad * Math.cos((target - 90) / 2 * (Math.PI / 180)), arc_rad * Math.sin((target - 90) / 2 * (Math.PI / 180)))), loc.add(new Point(arc_rad * Math.cos(target * (Math.PI / 180)) + 0.00001, arc_rad * Math.sin(target * (Math.PI / 180)))));
+                sq14.on('mouseenter', mouseenter);
+                sq14.on('mouseleave', mouseleave);
                 sq14.strokeWidth = 3;
                 sq14.strokeColor = new Color('#aaa');
                 sq14.visible = true;
@@ -204,7 +246,8 @@ class PaperMap extends StarMap {
                 planet_loc = planet_loc.rotate(current_growing_planet.orbit.speed / 50, loc);
                 sq11.remove();
                 sq11 = new Path.Arc(planet_loc.add(new Point(0, -planet_radius)), planet_loc.add(new Point(planet_radius * Math.cos((target - 90) / 2 * (Math.PI / 180)), planet_radius * Math.sin((target - 90) / 2 * (Math.PI / 180)))), planet_loc.add(new Point(planet_radius * Math.cos(target * (Math.PI / 180)) + 0.00001, planet_radius * Math.sin(target * (Math.PI / 180)))));
-
+                sq11.on('mouseenter', mouseenter);
+                sq11.on('mouseleave', mouseleave);
                 sq11.strokeWidth = 3;
                 sq11.strokeColor = new Color('#aaa');
                 sq_target += incr;
@@ -335,7 +378,6 @@ class PaperMap extends StarMap {
                 }
             });
             planet_buffer.on('mouseup', () => {
-
                 incr = -4;
             });
             let accu = 0;
@@ -475,68 +517,17 @@ class PaperMap extends StarMap {
         sun.on('mouseup', () => {
             incr = -4;
         });
-        geometry.on('mouseenter', () => {
-
-            geometry.bringToFront()
-            surround.opacity = 0;
-            sun.visible = true;
-            this.tooltip.show();
-            planets.visible = true;
-            planet_buffers.visible = true;
-            h_geo.visible = true;
-            moons.visible = true;
-
-
-            circ.fillColor = new Color('#111');
-            sun.bringToFront();
-            planets.bringToFront();
-            moons.bringToFront();
-            if (star.active && !on_planet) {
-                sq12.visible = true;
-                sq12.bringToFront();
-            }
-
-            if (on_planet) {
-                sq13.visible = true;
-                sq12.bringToFront();
-            }
-            planet_buffers.bringToFront();
-            circ.scale(10);
-        });
-
+        geometry.on('mouseenter', mouseenter);
         geometry.on('mouseleave', () => {
             this.tooltip.hide();
-
-
             sq13.visible = false;
         });
-
-
-
-
         this.scene.addChildren([geometry]);
         circ.on('mouseleave', () => {
             this.tooltip.hide();
         });
-        geometry.on('mouseleave', () => {
-            planet_buffers.visible = false;
-            surround.opacity = 1;
-            sun.visible = false;
-            circ.fillColor = new Color('#000');
-            if (star.active) {
-                circ.fillColor = new Color('#444');
-            }
-
-            planets.visible = false;
-            h_geo.visible = false;
-            moons.visible = false;
-            sun.sendToBack();
-            circ.scale(1 / 10);
-            sq12.visible = false;
-
-        });
+        geometry.on('mouseleave', mouseleave);
         this.paper.view.on('frame', () => {
-
             surround.rotate(2);
             sq2.rotate(0.4, sq2_centroid);
             sq3.rotate(0.8, sq3_centroid);
