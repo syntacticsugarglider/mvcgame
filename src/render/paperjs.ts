@@ -291,12 +291,21 @@ class PaperMap extends StarMap {
         let resource_html = "";
         let s_resource_name = "";
         let s_resource_color = "";
-        if (star.star.resource == StarResource.Caesium) {
-            s_resource_name = 'caesium';
-            s_resource_color = '#cc241d';
+        if (star.star.resource == StarResource.Hydrogen) {
+            s_resource_name = 'hydrogen';
+            s_resource_color = '#ffb61c';
+        } else if (star.star.resource == StarResource.Helium) {
+            s_resource_name = 'helium';
+            s_resource_color = '#ff831c';
+        } else if (star.star.resource == StarResource.Carbon) {
+            s_resource_name = 'carbon';
+            s_resource_color = '#ffffff';
         } else if (star.star.resource == StarResource.Lithium) {
             s_resource_name = 'lithium';
-            s_resource_color = '#d79921';
+            s_resource_color = '#ff1c1c';
+        } else if (star.star.resource == StarResource.Iron) {
+            s_resource_name = 'iron';
+            s_resource_color = '#119999';
         }
         sun.on('mouseenter', () => {
             this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to jump`;

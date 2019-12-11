@@ -33,8 +33,11 @@ export interface Planet {
 }
 
 export enum StarResource {
+    Hydrogen,
+    Helium,
+    Carbon,
     Lithium,
-    Caesium
+    Iron
 }
 
 export enum Resource {

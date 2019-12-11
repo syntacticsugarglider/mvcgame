@@ -146,7 +146,7 @@ function generate_system(b_source: RandomProvider): System {
     let location = new Point(rand(-2000, 2000, b_source), rand(-2000, 2000, b_source));
     let seed = hash(`${location.x}${location.y}`);
     let source = new RandomProvider(seed);
-    let resource = select_random(weighted_list([[StarResource.Lithium, 5], [StarResource.Caesium, 1]]), source);
+    let resource = select_random(weighted_list([[StarResource.Hydrogen, 5], [StarResource.Helium, 4], [StarResource.Carbon, 3], [StarResource.Lithium, 2], [StarResource.Iron, 1]]), source);
     let system = new System(location, word(rand(3, 8, source), source), resource);
     let count_options: [number, number][] = [[0, 5], [1, 5], [2, 4], [3, 3]];
     let planet_count = select_random(weighted_list(count_options), source);
@@ -192,7 +192,7 @@ function generate_system(b_source: RandomProvider): System {
 }
 
 export function initialize(game: Game) {
-    let sol = new System(new Point(0, 0), 'sol', StarResource.Lithium);
+    let sol = new System(new Point(0, 0), 'sol', StarResource.Hydrogen);
     sol.active = true;
     let map = game.scene.new_map(sol);
 
