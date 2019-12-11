@@ -169,7 +169,7 @@ function generate_system(b_source: RandomProvider): System {
                 orbit: { radius: rand(10, 30, source) + size + planet.size, speed: rand_gt(1, -5, 5, source) },
                 size: size,
                 position: rand(0, 360, source),
-                resource: MoonResource.Corundum
+                resource: select_random(weighted_list([[MoonResource.Silica, 5], [MoonResource.Corundum, 4], [MoonResource.Hematite, 3], [MoonResource.Cobaltite, 2], [MoonResource.Ilmenite, 1]]), source)
             });
         }
         let n_ex = (r: Resource): boolean => {

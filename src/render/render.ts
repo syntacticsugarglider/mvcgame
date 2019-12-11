@@ -47,7 +47,10 @@ export enum Resource {
 
 export enum MoonResource {
     Silica,
-    Corundum
+    Corundum,
+    Hematite,
+    Cobaltite,
+    Ilmenite
 }
 
 

@@ -302,7 +302,7 @@ class PaperMap extends StarMap {
             s_resource_color = '#ffffff';
         } else if (star.star.resource == StarResource.Lithium) {
             s_resource_name = 'lithium';
-            s_resource_color = '#ff1c1c';
+            s_resource_color = '#ff6b6b';
         } else if (star.star.resource == StarResource.Iron) {
             s_resource_name = 'iron';
             s_resource_color = '#119999';
@@ -444,11 +444,20 @@ class PaperMap extends StarMap {
                 m_orbit.strokeColor = new Color('#555');
                 let rec;
                 if (moon.resource == MoonResource.Silica) {
-                    m_base.fillColor = new Color('#458588');
-                    rec = `<span style="color: #458588">silica</span>`;
+                    m_base.fillColor = new Color('#ffeaa8');
+                    rec = `<span style="color: #ffeaa8">silica</span>`;
                 } else if (moon.resource == MoonResource.Corundum) {
-                    rec = `<span style="color: #698d6a">corundum</span>`;
-                    m_base.fillColor = new Color('#698d6a');
+                    rec = `<span style="color: #be7db2">corundum</span>`;
+                    m_base.fillColor = new Color('#be7db2');
+                } else if (moon.resource == MoonResource.Hematite) {
+                    rec = `<span style="color: #f7a3ab">hematite</span>`;
+                    m_base.fillColor = new Color('#f7a3ab');
+                } else if (moon.resource == MoonResource.Cobaltite) {
+                    rec = `<span style="color: #8583ba">cobaltite</span>`;
+                    m_base.fillColor = new Color('#8583ba');
+                } else if (moon.resource == MoonResource.Ilmenite) {
+                    rec = `<span style="color: #ecad80">ilmenite</span>`;
+                    m_base.fillColor = new Color('#ecad80');
                 }
                 moons.addChild(m_base);
                 h_geo.addChild(m_orbit);
