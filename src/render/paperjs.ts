@@ -69,12 +69,12 @@ function centroid(triangle: Path) {
     return c;
 }
 
-class PaperMap extends StarMap {
+export class PaperMap extends StarMap {
     private paper: PaperScope;
     scene: Group;
     private tooltip: Tooltip;
     private current_system: System;
-    private on_planet: boolean;
+    public on_planet: boolean;
 
     constructor(paper: PaperScope, tooltip: Tooltip, sol: System) {
         super();
@@ -98,7 +98,7 @@ class PaperMap extends StarMap {
         let surround = new Path.RegularPolygon(loc, 9, 11);
         let was_active = false;
         if (star.active) {
-            circ.fillColor = new Color('#444');
+            circ.fillColor = new Color('#777');
             surround.strokeColor = new Color('#777');
             surround.fillColor = new Color('#111');
         }
@@ -175,7 +175,7 @@ class PaperMap extends StarMap {
             sun.visible = false;
             circ.fillColor = new Color('#000');
             if (star.active) {
-                circ.fillColor = new Color('#444');
+                circ.fillColor = new Color('#777');
             }
             planets.visible = false;
             h_geo.visible = false;
@@ -183,7 +183,7 @@ class PaperMap extends StarMap {
             sun.sendToBack();
             circ.scale(1 / 10);
             sq12.visible = false;
-
+            jumping = false;
         };
         this.paper.view.on('frame', () => {
             if (this.current_system != star) {
@@ -319,9 +319,7 @@ class PaperMap extends StarMap {
             }
 
         });
-        sun.on('mouseleave', () => {
-            sq_target = 0;
-        });
+
         sun.strokeColor = new Color('#444');
         sq6.fillColor = new Color('#111');
         sq7.strokeWidth = 0;
@@ -504,6 +502,10 @@ class PaperMap extends StarMap {
                 }
             });
 
+            planet_buffer.on('mouseleave', () => {
+                incr = -4;
+            });
+
             planet_geometry.addChild(base);
             this.paper.view.on('frame', () => {
                 planet_geometry.rotate(planet.orbit.speed / 50, loc);
@@ -543,10 +545,7 @@ class PaperMap extends StarMap {
             if (sq_target % 360 < incr) {
                 sq_target = 0;
             }
-            if (sq11.visible) {
-                sq11.visible = false;
-                sq_target = 0;
-            }
+
         });
         sun.on('mouseup', () => {
             incr = -4;

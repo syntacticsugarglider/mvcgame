@@ -1,4 +1,5 @@
 import { Point, Content } from '../scene';
+import { PaperMap } from './paperjs';
 import { Tooltip } from '../ui';
 
 export class Viewport {
@@ -53,10 +54,20 @@ export enum MoonResource {
     Ilmenite
 }
 
+function can_travel_to_star(star: Star, map: PaperMap): boolean {
+    if (map.on_planet) {
+
+    }
+    return true;
+}
 
 export interface Star {
     name: string;
     resource: StarResource
+    known: boolean;
+
+
+
 }
 
 export class System {
@@ -66,13 +77,14 @@ export class System {
     star: Star;
     active: boolean;
 
-    constructor(location: Point, name: string, resource: StarResource) {
+    constructor(location: Point, name: string, resource: StarResource, known: boolean) {
         this.location = location;
-        this.star = { name: name, resource: resource };
+        this.star = { name: name, resource: resource, known: known };
         this.name = name;
         this.planets = [];
         this.active = false;
     }
+
 }
 
 export abstract class StarMap {
