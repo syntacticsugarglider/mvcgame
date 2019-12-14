@@ -145,7 +145,14 @@ export class PaperMap extends StarMap {
         let scaler = 1;
         let planet_radius = 0;
         let temp_sun = false;
+        let trace_visibility = true;
         let mouseenter = () => {
+            if (!star.star.known) {
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\nno data`;
+                this.tooltip.show();
+                return;
+            }
+            trace_visibility = true;
             geometry.bringToFront()
             surround.opacity = 0;
             sun.visible = true;
@@ -154,6 +161,8 @@ export class PaperMap extends StarMap {
             planet_buffers.visible = true;
             h_geo.visible = true;
             moons.visible = true;
+            sq11.visible = false;
+            sq14.visible = false;
             circ.fillColor = new Color('#111');
             sun.bringToFront();
             planets.bringToFront();
@@ -170,6 +179,11 @@ export class PaperMap extends StarMap {
             circ.scale(10);
         };
         let mouseleave = () => {
+            if (!star.star.known) {
+                this.tooltip.text = "Unknown"
+                return;
+            }
+            trace_visibility = false;
             planet_buffers.visible = false;
             surround.opacity = 1;
             sun.visible = false;
@@ -183,7 +197,10 @@ export class PaperMap extends StarMap {
             sun.sendToBack();
             circ.scale(1 / 10);
             sq12.visible = false;
-            jumping = false;
+            sq11.visible = true;
+            sq14.visible = true;
+
+
         };
         this.paper.view.on('frame', () => {
             if (this.current_system != star) {
@@ -209,7 +226,9 @@ export class PaperMap extends StarMap {
                 sq14.on('mouseleave', mouseleave);
                 sq14.strokeWidth = 3;
                 sq14.strokeColor = new Color('#aaa');
-                sq14.visible = true;
+                if (!trace_visibility) {
+                    sq14.visible = false;
+                }
                 sq_target += incr;
                 if (sq_target - incr < 0) {
                     temp_sun = false;
@@ -251,6 +270,9 @@ export class PaperMap extends StarMap {
                 sq11.on('mouseleave', mouseleave);
                 sq11.strokeWidth = 3;
                 sq11.strokeColor = new Color('#aaa');
+                if (!trace_visibility) {
+                    sq11.visible = false;
+                }
                 sq_target += incr;
                 if (sq_target - incr < 0) {
                     jumping = false;
@@ -375,16 +397,23 @@ export class PaperMap extends StarMap {
             ordered_planet_geos.push(base);
             base.fillColor = new Color('#444');
             planet_buffer.on('mousedown', () => {
+                if (!star.active) {
+                    return;
+                }
+                if (temp_sun) {
+                    sq_target = 0;
+                    temp_sun = false;
+                    sq14.remove();
+                }
                 if (current_growing_planet != planet) {
                     sq_target = 0;
                 }
                 if (current_planet == planet && on_planet) {
                     return
                 }
+
                 incr = 3;
-                if (!star.active) {
-                    return;
-                }
+                temp_sun = false;
                 jumping = true;
                 growing = true;
 
@@ -539,8 +568,12 @@ export class PaperMap extends StarMap {
             }
             incr = 3;
             jumping = true;
+            sq11.remove();
             if (on_planet) {
                 temp_sun = true;
+            }
+            if (growing) {
+                sq_target = 0;
             }
             if (sq_target % 360 < incr) {
                 sq_target = 0;
