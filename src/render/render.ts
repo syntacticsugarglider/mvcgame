@@ -54,12 +54,6 @@ export enum MoonResource {
     Ilmenite
 }
 
-function can_travel_to_star(star: Star, map: PaperMap): boolean {
-    if (map.on_planet) {
-
-    }
-    return true;
-}
 
 export interface Star {
     name: string;

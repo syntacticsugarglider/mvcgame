@@ -150,6 +150,7 @@ function generate_system(b_source: RandomProvider): System {
     let system = new System(location, word(rand(3, 8, source), source), resource, true);
     let count_options: [number, number][] = [[0, 5], [1, 5], [2, 4], [3, 3]];
     let planet_count = select_random(weighted_list(count_options), source);
+    let max_planet_orbit = 150;
     for (let i = 0; i < planet_count; i++) {
         let count_options: [number, number][] = [[0, 5], [2, 2], [3, 2], [4, 1]];
         let moon_count = select_random(weighted_list(count_options), source);

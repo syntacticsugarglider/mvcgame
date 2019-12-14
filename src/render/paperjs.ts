@@ -75,6 +75,7 @@ export class PaperMap extends StarMap {
     private tooltip: Tooltip;
     private current_system: System;
     public on_planet: boolean;
+    public current_planet: Planet;
 
     constructor(paper: PaperScope, tooltip: Tooltip, sol: System) {
         super();
@@ -83,6 +84,29 @@ export class PaperMap extends StarMap {
         this.tooltip = tooltip;
         this.current_system = sol;
         this.on_planet = false;
+
+    }
+
+
+    to_star(star: System): boolean {
+        if (star.star.known && !this.on_planet && this.current_system != star) {
+            return true;
+        }
+
+        if (this.on_planet && star == this.current_system) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    to_planet(star: System, planet: Planet): boolean {
+        if (this.current_system == star && ((this.current_planet != planet) || !this.on_planet)) {
+            return true;
+        }
+        return false;
+
     }
 
     hide(): void {
@@ -167,7 +191,7 @@ export class PaperMap extends StarMap {
             sun.bringToFront();
             planets.bringToFront();
             moons.bringToFront();
-            if (star.active && !on_planet) {
+            if (star.active && !on_planet && !temp_sun) {
                 sq12.visible = true;
                 sq12.bringToFront();
             }
@@ -288,6 +312,7 @@ export class PaperMap extends StarMap {
                     sq13.scale(scaler);
                     sq13.scale(planet_radius);
                     current_planet = current_growing_planet;
+                    this.current_planet = current_planet;
                     this.tooltip.text = `<span class="content">${current_planet.name}</span>\n${planet_texts.get(current_planet)}`;
                     scaler = 1 / planet_radius;
                     growing = false;
@@ -330,10 +355,21 @@ export class PaperMap extends StarMap {
             s_resource_color = '#119999';
         }
         sun.on('mouseenter', () => {
-            this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to jump`;
+
+            if (this.to_star(star)) {
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to jump`;
+            }
+            else {
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nunable to jump`;
+            }
             if (star.active) {
                 if (on_planet) {
-                    this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to travel`;
+                    if (this.to_star(star)) {
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to travel`;
+                    }
+                    else {
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nunable to travel`;
+                    }
                 }
                 else {
                     this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich`;
@@ -397,7 +433,7 @@ export class PaperMap extends StarMap {
             ordered_planet_geos.push(base);
             base.fillColor = new Color('#444');
             planet_buffer.on('mousedown', () => {
-                if (!star.active) {
+                if (!this.to_planet(star, planet)) {
                     return;
                 }
                 if (temp_sun) {
@@ -407,9 +443,6 @@ export class PaperMap extends StarMap {
                 }
                 if (current_growing_planet != planet) {
                     sq_target = 0;
-                }
-                if (current_planet == planet && on_planet) {
-                    return
                 }
 
                 incr = 3;
@@ -527,7 +560,17 @@ export class PaperMap extends StarMap {
                     this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}`;
                 }
                 else {
-                    this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\nlong press to travel`;
+                    if (this.to_planet(star, planet)) {
+                        this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\nlong press to travel`;
+                    }
+                    else {
+                        if (star == this.current_system) {
+                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\nunable to travel`;
+                        }
+                        else {
+                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\nunable to jump`;
+                        }
+                    }
                 }
             });
 
@@ -563,9 +606,10 @@ export class PaperMap extends StarMap {
         });
 
         sun.on('mousedown', () => {
-            if (this.on_planet && !on_planet) {
+            if (sq12.visible || !this.to_star(star)) {
                 return;
             }
+
             incr = 3;
             jumping = true;
             sq11.remove();
@@ -573,6 +617,7 @@ export class PaperMap extends StarMap {
                 temp_sun = true;
             }
             if (growing) {
+                growing = false;
                 sq_target = 0;
             }
             if (sq_target % 360 < incr) {
