@@ -115,6 +115,7 @@ export class PaperMap extends StarMap {
 
     add(star: System): void {
         let loc = new Point(star.location.x, star.location.y);
+        let dist_scale = 1 / 9;
         let label = new PointText(new Point(loc.x!, loc.y! + 32.5));
         let circ = new Path.Circle(loc, 15);
         circ.strokeColor = new Color('#777');
@@ -356,20 +357,31 @@ export class PaperMap extends StarMap {
             s_resource_color = '#119999';
         }
         sun.on('mouseenter', () => {
-
-            if (this.to_star(star)) {
-                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to jump`;
+            let first_point: Point;
+            let second_point: Point;
+            if (!this.on_planet) {
+                first_point = new Point(star.location.x, star.location.y);
             }
             else {
-                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nunable to jump`;
+                first_point = new Point(star.location.x + Math.cos(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius,
+                    star.location.y + Math.sin(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius)
+            }
+
+            second_point = new Point(this.current_system.location.x, this.current_system.location.y);
+            let distance = dist_scale * Math.sqrt((first_point.x! - second_point.x!) ** 2 + (first_point.y! - second_point.y!) ** 2);
+            if (this.to_star(star)) {
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nlong press to jump`;
+            }
+            else {
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nunable to jump`;
             }
             if (star.active) {
                 if (on_planet) {
                     if (this.to_star(star)) {
-                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to travel`;
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nlong press to travel`;
                     }
                     else {
-                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nunable to travel`;
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nunable to travel`;
                     }
                 }
                 else {
