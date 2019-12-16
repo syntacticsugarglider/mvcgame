@@ -1,6 +1,6 @@
-import { Render, Viewport, StarMap, System, Resource, MoonResource, StarResource, Planet } from './render';
+import { Render, Viewport, StarMap, Resource, MoonResource, StarResource, Planet, System } from './render';
 import { Content, ContentType, Ship } from '../scene';
-import { Tooltip } from '../ui';
+import { Tooltip, Modules } from '../ui';
 
 import { PaperScope, Matrix, Point, Path, Color, Group, PointText, Tween, Rectangle, Size } from 'paper';
 import { start } from 'repl';
@@ -9,7 +9,6 @@ export class PaperJS extends Render {
     private paper: PaperScope;
     private scene: Group;
     private tooltip?: Tooltip;
-
     constructor(canvas: HTMLCanvasElement) {
         super(canvas);
         this.paper = new PaperScope();
@@ -75,6 +74,7 @@ export class PaperMap extends StarMap {
     private paper: PaperScope;
     scene: Group;
     private tooltip: Tooltip;
+    private h: (loc: System | Planet) => void;
     private current_system: System;
     public on_planet: boolean;
     public current_planet: Planet;
@@ -86,9 +86,12 @@ export class PaperMap extends StarMap {
         this.tooltip = tooltip;
         this.current_system = sol;
         this.on_planet = false;
-
+        this.h = (_) => { };
     }
 
+    r_move_handler(h: (loc: System | Planet) => void): void {
+        this.h = h;
+    }
 
     to_star(star: System): boolean {
         if (star.star.known && !this.on_planet && this.current_system != star) {
@@ -281,7 +284,9 @@ export class PaperMap extends StarMap {
                     surround.strokeColor = new Color('#777');
                     surround.fillColor = new Color('#111');
 
-                    return
+                    this.h(star);
+
+                    return;
                 }
                 sq_target = sq_target % 360;
             }
@@ -324,6 +329,9 @@ export class PaperMap extends StarMap {
                     sq13.position = planet_loc;
                     sq13.visible = true;
                     sq13.bringToFront();
+
+                    this.h(current_planet);
+
                     return
                 }
                 sq_target = sq_target % 360;
