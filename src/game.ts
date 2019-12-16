@@ -217,7 +217,7 @@ function generate_system(b_source: RandomProvider): System {
     system.planets.forEach((planet) => {
         moon_orbit_info = [];
         let moon: Moon;
-        let count_options: [number, number][] = [[0, 3], [2, 2], [3, 2], [4, 1]];
+        let count_options: [number, number][] = [[0, 3], [1, 2], [2, 2], [3, 2], [4, 1]];
         let moon_count = select_random(weighted_list(count_options), source);
         let generated: boolean;
         let max_distance: number;
