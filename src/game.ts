@@ -236,7 +236,7 @@ function generate_system(b_source: RandomProvider): System {
                 if ((max_distance - size) < (planet!.size + size + (planet!.resources.length + 1) * 3 + 3)) {
                     break;
                 }
-                if (moon_orbit_info.every(val => ((Math.abs(val[0] - moon.orbit.radius))) > val[1] + moon.size)) {
+                if (moon_orbit_info.every(val => ((Math.abs(val[0] - moon.orbit.radius))) > val[1] + moon.size + 3)) {
                     generated = true;
                     moon_orbit_info.push([moon.orbit.radius, moon.size]);
                     break
