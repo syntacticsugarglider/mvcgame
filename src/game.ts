@@ -188,7 +188,7 @@ function generate_system(b_source: RandomProvider): System {
                 moons: [] as Moon[],
             };
             max_distance = Math.min.apply(null, orbit_info.map(val => ((Math.abs(val[0] - planet.orbit.radius) - val[1] - val[2] * 3))));
-            if ((max_distance - planet.size - temp_resources.length * 3) > 0 && (planet.orbit.radius + planet.size < 150) && (planet.orbit.radius + planet.size > 25)) {
+            if ((max_distance - planet.size - (temp_resources.length + 1) * 3) > 0 && (planet.orbit.radius + planet.size + (temp_resources.length + 1) * 3 < 150) && (planet.orbit.radius + planet.size + (temp_resources.length + 1) * 3 > 25)) {
                 planet.resources = temp_resources;
                 generated = true;
                 break;
@@ -222,7 +222,7 @@ function generate_system(b_source: RandomProvider): System {
         let generated: boolean;
         let max_distance: number;
         max_distance = Math.min.apply(null, orbit_info.map(val => ((replace(Math.abs(val[0] - planet.orbit.radius)) - val[1] - val[2] * 3))));
-        max_distance = Math.min(max_distance, planet.orbit.radius - 25, 150 - planet.orbit.radius);
+        max_distance = Math.min(max_distance, planet.orbit.radius - 28, 147 - planet.orbit.radius);
         for (let i = 0; i < moon_count; i++) {
             generated = false;
             for (let i: number = 0; i < 20; i++) {
