@@ -220,14 +220,24 @@ export class Cargo {
         if (this.used + item.amount > this.total_cap) {
             return;
         }
+        let rcap = this.el.querySelector('.rcap')!;
+        let t = document.querySelector(`[data-res-name="${item.name}"]`);
+        console.log(t);
+        if (t != null) {
+            this.resources.find((el) => el.name == item.name)!.amount += item.amount;
+            this.used += item.amount;
+            this.update_cap_display();
+            return;
+        }
         this.used += item.amount;
         this.update_cap_display();
         this.resources.push(item);
         let el = document.createElement('div');
         el.setAttribute('class', 'module res a');
         el.setAttribute('tooltip', tooltip_of(item.name));
+        el.setAttribute('data-res-name', item.name);
         this.bar.add(el);
         el.innerHTML = `<span style="color: ${color_of(item.name)};">${item.name}</span><div class="content">${format_mass(item.amount)}</div>`;
-        this.el.querySelector('.rcap')!.before(el);
+        rcap.before(el);
     }
 }

@@ -317,6 +317,14 @@ export function initialize(game: Game) {
         name: "platinum",
         amount: kg(1500)
     });
+    c.push({
+        name: "silica",
+        amount: kg(50)
+    });
+    c.push({
+        name: "platinum",
+        amount: kg(25)
+    });
 
     game.set_map(map);
 }
