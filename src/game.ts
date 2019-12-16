@@ -1,4 +1,4 @@
-import { Render, System, Resource, MoonResource, Moon, StarResource } from './render/render';
+import { Render, System, Resource, MoonResource, Moon, StarResource, Planet } from './render/render';
 import { Content, Updater, Ship, Point, ContentType } from './scene';
 import { Bar } from "./ui";
 
@@ -148,31 +148,19 @@ function generate_system(b_source: RandomProvider): System {
     let source = new RandomProvider(seed);
     let resource = select_random(weighted_list([[StarResource.Hydrogen, 5], [StarResource.Helium, 4], [StarResource.Carbon, 3], [StarResource.Lithium, 2], [StarResource.Iron, 1]]), source);
     let system = new System(location, word(rand(3, 8, source), source), resource, true);
-    let count_options: [number, number][] = [[0, 5], [1, 5], [2, 4], [3, 3]];
+    let count_options: [number, number][] = [[0, 0], [1, 5], [2, 4], [3, 3]];
     let planet_count = select_random(weighted_list(count_options), source);
-    let max_planet_orbit = 150;
+    let orbit_info: [number, number, number][] = [];
+    let moon_orbit_info: [number, number][] = [];
+    let temp_resources: Resource[];
     for (let i = 0; i < planet_count; i++) {
-        let count_options: [number, number][] = [[0, 5], [2, 2], [3, 2], [4, 1]];
-        let moon_count = select_random(weighted_list(count_options), source);
+        temp_resources = [];
         let r_count_options: [number, number][] = [[0, 10], [1, 5], [2, 2]];
         let resource_count = select_random(weighted_list(r_count_options), source);
-        let planet = {
-            orbit: { radius: rand(50, 120, source), speed: rand_gt(1, -10, 10, source) },
-            name: word(rand(3, 8, source), source),
-            position: rand(0, 360, source),
-            size: rand(10, 20, source),
-            resources: [] as Resource[],
-            moons: [] as Moon[],
-        };
-        for (let i = 0; i < moon_count; i++) {
-            let size = rand(2, 5, source);
-            planet.moons.push({
-                orbit: { radius: rand(10, 30, source) + size + planet.size, speed: rand_gt(1, -5, 5, source) },
-                size: size,
-                position: rand(0, 360, source),
-                resource: select_random(weighted_list([[MoonResource.Silica, 5], [MoonResource.Corundum, 4], [MoonResource.Hematite, 3], [MoonResource.Cobaltite, 2], [MoonResource.Ilmenite, 1]]), source)
-            });
-        }
+        let planet: Planet;
+        let generated = false;
+        let max_distance: number = 0;
+
         let n_ex = (r: Resource): boolean => {
             for (let res of planet.resources) {
                 if (res == r) {
@@ -185,10 +173,88 @@ function generate_system(b_source: RandomProvider): System {
         for (let i = 0; i < resource_count; i++) {
             let res = select_random(r_opts, source);
             r_opts.splice(r_opts.indexOf(res), 1);
-            planet.resources.push(res!);
+            if (!temp_resources.includes(res)) {
+                temp_resources.push(res);
+            }
         }
-        system.planets.push(planet);
+
+        for (let i: number = 0; i < 20; i++) {
+            planet = {
+                orbit: { radius: rand(50, 135, source), speed: rand_gt(1, -10, 10, source) },
+                name: word(rand(3, 8, source), source),
+                position: rand(0, 360, source),
+                size: rand(10, 15, source),
+                resources: [] as Resource[],
+                moons: [] as Moon[],
+            };
+            max_distance = Math.min.apply(null, orbit_info.map(val => ((Math.abs(val[0] - planet.orbit.radius) - val[1] - val[2] * 3))));
+            if ((max_distance - planet.size - temp_resources.length * 3) > 0 && (planet.orbit.radius + planet.size < 150) && (planet.orbit.radius + planet.size > 25)) {
+                planet.resources = temp_resources;
+                generated = true;
+                break;
+            }
+        }
+        if (!generated) {
+            planet_count = i;
+            break;
+        }
+
+
+        orbit_info.push([planet!.orbit.radius, planet!.size, planet!.resources.length]);
+
+
+
+        system.planets.push(planet!);
     }
+    let replace = (num: number) => {
+        if (num == 0) {
+            return Infinity;
+        }
+        else {
+            return num;
+        }
+    }
+    system.planets.forEach((planet) => {
+        moon_orbit_info = [];
+        let moon: Moon;
+        let count_options: [number, number][] = [[0, 3], [2, 2], [3, 2], [4, 1]];
+        let moon_count = select_random(weighted_list(count_options), source);
+        let generated: boolean;
+        let max_distance: number;
+
+        max_distance = Math.min.apply(null, orbit_info.map(val => ((replace(Math.abs(val[0] - planet.orbit.radius)) - val[1] - val[2] * 3))));
+        max_distance = Math.min(max_distance, planet.orbit.radius - 25, 150 - planet.orbit.radius);
+        // if (system.name == "gikaviz") {
+        //     console.log(orbit_info);
+        // }
+        for (let i = 0; i < moon_count; i++) {
+
+            generated = false;
+            for (let i: number = 0; i < 20; i++) {
+                let size = rand(2, 3, source);
+                moon = {
+                    orbit: { radius: rand(planet!.size + size + (planet!.resources.length + 1) * 3 + 3, max_distance - size, source), speed: rand_gt(1, -5, 5, source) },
+                    size: size,
+                    position: rand(0, 360, source),
+                    resource: select_random(weighted_list([[MoonResource.Silica, 5], [MoonResource.Corundum, 4], [MoonResource.Hematite, 3], [MoonResource.Cobaltite, 2], [MoonResource.Ilmenite, 1]]), source)
+                };
+                if ((max_distance - size) < (planet!.size + size + (planet!.resources.length + 1) * 3 + 3)) {
+                    break;
+                }
+                if (moon_orbit_info.every(val => ((Math.abs(val[0] - moon.orbit.radius))) > val[1] + moon.size)) {
+                    generated = true;
+                    moon_orbit_info.push([moon.orbit.radius, moon.size]);
+                    break
+                }
+            }
+            if (!generated) {
+                moon_count = i;
+                break
+            }
+            planet!.moons.push(moon!);
+        }
+    })
+
     return system;
 }
 

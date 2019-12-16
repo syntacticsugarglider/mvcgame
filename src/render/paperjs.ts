@@ -207,6 +207,7 @@ export class PaperMap extends StarMap {
                 this.tooltip.text = "Unknown"
                 return;
             }
+            incr = -4;
             trace_visibility = false;
             planet_buffers.visible = false;
             surround.opacity = 1;
