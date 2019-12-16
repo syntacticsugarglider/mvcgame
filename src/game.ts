@@ -1,6 +1,6 @@
 import { Render, System, Resource, MoonResource, Moon, StarResource, Planet, StarMap } from './render/render';
 import { Content, Updater, Ship, Point, ContentType } from './scene';
-import { Bar } from "./ui";
+import { Bar, Cargo } from "./ui";
 
 var vowels = ['a', 'e', 'i', 'o', 'u'];
 var consts = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'qu', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z', 'ch', 'sh', 'sv', 'yt', 'bl'];
@@ -39,7 +39,7 @@ function word(len: number, source: RandomProvider): string {
 export class Game {
     scene: Render;
     private map: StarMap;
-    private bar: Bar;
+    bar: Bar;
     private map_visible: boolean;
     private updaters: Updater[];
 
@@ -271,6 +271,14 @@ function generate_system(b_source: RandomProvider): System {
     return system;
 }
 
+function tons(tons: number): number {
+    return tons * 1000000;
+}
+
+function kg(tons: number): number {
+    return tons * 1000;
+}
+
 export function initialize(game: Game) {
     let sol = new System(new Point(0, 0), 'sol', StarResource.Hydrogen, true);
     sol.planets = [{
@@ -302,6 +310,13 @@ export function initialize(game: Game) {
         map.add(system);
     }
     handle_pan(game.scene);
+
+    let c = new Cargo(tons(2), game.bar);
+
+    c.push({
+        name: "silica",
+        amount: kg(1500)
+    });
 
     game.set_map(map);
 }
