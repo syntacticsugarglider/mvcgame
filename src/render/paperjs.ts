@@ -164,7 +164,7 @@ export class PaperMap extends StarMap {
         let planet_loc = new Point(0, 0);
         let growing = false;
         let on_planet = false;
-        let incr = 3;
+        let incr = 5;
         let arc_rad = 25;
         let scaler = 1;
         let planet_radius = 0;
@@ -207,7 +207,7 @@ export class PaperMap extends StarMap {
                 this.tooltip.text = "Unknown"
                 return;
             }
-            incr = -4;
+            incr = -5;
             trace_visibility = false;
             planet_buffers.visible = false;
             surround.opacity = 1;
@@ -446,7 +446,7 @@ export class PaperMap extends StarMap {
                     sq_target = 0;
                 }
 
-                incr = 3;
+                incr = 5;
                 temp_sun = false;
                 jumping = true;
                 growing = true;
@@ -459,20 +459,30 @@ export class PaperMap extends StarMap {
                 }
             });
             planet_buffer.on('mouseup', () => {
-                incr = -4;
+                incr = -5;
             });
             let accu = 0;
             planet.resources.forEach((resource) => {
                 let resource_geo = new Path.Circle(p_loc, planet.size + accu + 3);
                 planet_geometry.insertChild(0, resource_geo);
                 let rec;
-                if (resource == Resource.Petroleum) {
-                    resource_geo.fillColor = new Color('#b16286');
-                    rec = `<span style="color: #b16286">petroleum</span>`;
-                } else if (resource == Resource.Cellulose) {
-                    resource_geo.fillColor = new Color('#98971a');
-                    rec = `<span style="color: #98971a">cellulose</span>`;
+                if (resource == Resource.Oxygen) {
+                    resource_geo.fillColor = new Color('#9CD3DC');
+                    rec = `<span style="color: #b16286">oxygen</span>`;
+                } else if (resource == Resource.Methane) {
+                    resource_geo.fillColor = new Color('#F5AF6E');
+                    rec = `<span style="color: #98971a">methane</span>`;
+                } else if (resource == Resource.Ammonia) {
+                    resource_geo.fillColor = new Color('#5B5BAC');
+                    rec = `<span style="color: #98971a">ammonia</span>`;
+                } else if (resource == Resource.Organics) {
+                    resource_geo.fillColor = new Color('#7FD676');
+                    rec = `<span style="color: #98971a">organics</span>`;
+                } else if (resource == Resource.Platinum) {
+                    resource_geo.fillColor = new Color('#ff5349');
+                    rec = `<span style="color: #98971a">platinum</span>`;
                 }
+
                 if (accu == 0) {
                     if (planet.resources.length < 3) {
                         resource_html += `${rec}`
@@ -576,7 +586,7 @@ export class PaperMap extends StarMap {
             });
 
             planet_buffer.on('mouseleave', () => {
-                incr = -4;
+                incr = -5;
             });
 
             planet_geometry.addChild(base);
@@ -611,7 +621,7 @@ export class PaperMap extends StarMap {
                 return;
             }
 
-            incr = 3;
+            incr = 5;
             jumping = true;
             sq11.remove();
             if (on_planet) {
@@ -627,7 +637,7 @@ export class PaperMap extends StarMap {
 
         });
         sun.on('mouseup', () => {
-            incr = -4;
+            incr = -5;
         });
         geometry.on('mouseenter', mouseenter);
         geometry.on('mouseleave', () => {

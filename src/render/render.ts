@@ -42,8 +42,11 @@ export enum StarResource {
 }
 
 export enum Resource {
-    Petroleum,
-    Cellulose
+    Oxygen,
+    Methane,
+    Ammonia,
+    Organics,
+    Platinum
 }
 
 export enum MoonResource {
