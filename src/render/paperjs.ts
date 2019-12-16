@@ -47,6 +47,8 @@ export class PaperJS extends Render {
 
     show_map(map: StarMap): void {
         this.scene.visible = false;
+        document.querySelector('.ico')!.classList.add('hidden');
+        document.querySelector('.return')!.textContent = 'hide starmap';
         (map as PaperMap).scene.visible = true;
     }
 

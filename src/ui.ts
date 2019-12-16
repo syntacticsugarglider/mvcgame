@@ -69,7 +69,10 @@ export class Bar {
     private vel: Data;
     tooltip: Tooltip;
 
-    constructor(bar: Element) {
+    constructor(bar: Element, show_map: () => void) {
+        document.querySelector('.return')!.addEventListener('click', () => {
+            show_map();
+        });
         this.vel = new Data(bar, 'vel');
         this.tooltip = new Tooltip(bar.querySelector('.tooltip.content')!);
         bar.querySelectorAll('[tooltip]').forEach((e) => {

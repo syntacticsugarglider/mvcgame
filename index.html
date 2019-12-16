@@ -37,7 +37,7 @@
         html {
             font-family: 'Fira Mono', 'Source Code Pro', 'Courier New', Courier, monospace;
             font-size: 15px;
-            line-height: 1.15;
+            line-height: 1.5;
             -webkit-text-size-adjust: 100%;
         }
 
@@ -181,7 +181,6 @@
             justify-content: flex-start;
             align-items: flex-end;
             padding-bottom: 10px;
-            line-height: 1.5;
             max-width: 100%;
         }
 
@@ -198,8 +197,125 @@
         .tooltip.content.active {
             display: block;
         }
+
+        .internals {
+            display: flex;
+            flex-flow: row wrap;
+        }
+
+        .ico {
+            width: calc(100% - 40px);
+            font-size: var(--info-size);
+            padding-top: 25px;
+            padding-bottom: 25px;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .module {
+            padding: 10px;
+            border: 1px solid var(--fg);
+            color: var(--bg-text-accent);
+            flex-grow: 1;
+            margin: 5px;
+            background: var(--background-accent);
+        }
+
+        .module.add-info {
+            flex-grow: 2;
+            background: var(--background);
+        }
+
+        .encompass {
+            padding: 10px;
+            border: 1px solid var(--fg);
+            color: var(--bg-text-accent);
+            margin: 5px;
+        }
+
+        .arrange {
+            display: flex;
+            flex-flow: row wrap;
+            flex-shrink: 1;
+        }
+
+        .module.rcap {
+            background: var(--background);
+        }
+
+        .module.res:first-child {
+            margin-left: 0;
+        }
+
+        .module.res:last-child {
+            margin-right: 0;
+        }
+
+        .action {
+            max-width: 100px;
+            padding: 10px;
+            display: inline-block;
+            border: 1px solid var(--bg-text-accent);
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .a {
+            cursor: pointer;
+        }
+
+        .a:hover:hover {
+            background: var(--background);
+        }
+
+        .a:hover {
+            color: var(--bg-text);
+            border: 1px solid var(--bg-text);
+        }
+
+        .return {
+            color: var(--bg-text-accent);
+            background: var(--background-accent);
+            max-width: none;
+            margin-bottom: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
     <script src="bundle.js"></script>
+    <div class="ico">
+        <div class="internals">
+            <div class="encompass cargo">
+                cargo
+                <div class="arrange">
+                    <div class="module res a">silica<div class="content">40kg</div>
+                    </div>
+                    <div class="module res a">corundum<div class="content">60kg</div>
+                    </div>
+                    <div class="module rcap">remaining capacity<div><span class="content">100kg</span> of total <span
+                                class="content">12t</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="module">
+                <div>mining drone</div>
+                <div>status: <span class="content">inactive</span></div>
+                <div>no targets in range</div>
+            </div>
+            <div class="module">
+                <div>hull</div>
+                <div>integrity: <span class="content">100%</span></div>
+                <div class="action a">repair</div>
+            </div>
+            <div class="module add-info">
+                find more modules
+            </div>
+        </div>
+    </div>
     <div class="container">
         <canvas resize></canvas>
         <div class="bar container">
@@ -233,6 +349,9 @@
                                 ion</div>
                         </div>
                     </div>
+                </div>
+                <div class="column">
+                    <div class="return option">show starmap</div>
                 </div>
             </div>
         </div>

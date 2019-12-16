@@ -1,4 +1,4 @@
-import { Render, System, Resource, MoonResource, Moon, StarResource, Planet } from './render/render';
+import { Render, System, Resource, MoonResource, Moon, StarResource, Planet, StarMap } from './render/render';
 import { Content, Updater, Ship, Point, ContentType } from './scene';
 import { Bar } from "./ui";
 
@@ -38,12 +38,26 @@ function word(len: number, source: RandomProvider): string {
 
 export class Game {
     scene: Render;
+    private map: StarMap;
     private bar: Bar;
+    private map_visible: boolean;
     private updaters: Updater[];
 
     constructor(render: Render) {
         this.updaters = [];
-        this.bar = new Bar(document.querySelector(".bar.container")!);
+        this.map_visible = false;
+        this.bar = new Bar(document.querySelector(".bar.container")!, () => {
+            if (this.map_visible) {
+                document.querySelector('.ico')!.classList.remove('hidden');
+                document.querySelector('.return')!.textContent = 'show starmap';
+                document.querySelector('canvas')!.classList.add('hidden');
+                this.map_visible = false;
+            } else {
+                this.scene.show_map(this.map);
+                document.querySelector('canvas')!.classList.remove('hidden');
+                this.map_visible = true;
+            }
+        });
         this.scene = render;
         this.scene.use_tooltip(this.bar.tooltip);
     }
@@ -69,6 +83,10 @@ export class Game {
         if (content.update) {
             this.updaters.push(content.update!);
         }
+    }
+
+    set_map(map: StarMap) {
+        this.map = map;
     }
 }
 
@@ -266,5 +284,5 @@ export function initialize(game: Game) {
     }
     handle_pan(game.scene);
 
-    game.scene.show_map(map);
+    game.set_map(map);
 }
