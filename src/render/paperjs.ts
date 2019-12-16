@@ -362,14 +362,14 @@ export class PaperMap extends StarMap {
             let first_point: Point;
             let second_point: Point;
             if (!this.on_planet) {
-                first_point = new Point(star.location.x, star.location.y);
+                first_point = new Point(this.current_system.location.x, star.location.y);
             }
             else {
-                first_point = new Point(star.location.x + Math.cos(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius,
-                    star.location.y + Math.sin(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius)
+                first_point = new Point(this.current_system.location.x + Math.cos(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius,
+                    this.current_system.location.y + Math.sin(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius)
             }
 
-            second_point = new Point(this.current_system.location.x, this.current_system.location.y);
+            second_point = new Point(star.location.x, star.location.y);
             let distance = dist_scale * Math.sqrt((first_point.x! - second_point.x!) ** 2 + (first_point.y! - second_point.y!) ** 2);
             if (this.to_star(star)) {
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nlong press to jump`;
@@ -482,19 +482,19 @@ export class PaperMap extends StarMap {
                 let rec;
                 if (resource == Resource.Oxygen) {
                     resource_geo.fillColor = new Color('#9CD3DC');
-                    rec = `<span style="color: #b16286">oxygen</span>`;
+                    rec = `<span style="color: #9CD3DC">oxygen</span>`;
                 } else if (resource == Resource.Methane) {
                     resource_geo.fillColor = new Color('#F5AF6E');
-                    rec = `<span style="color: #98971a">methane</span>`;
+                    rec = `<span style="color: #F5AF6E">methane</span>`;
                 } else if (resource == Resource.Ammonia) {
                     resource_geo.fillColor = new Color('#5B5BAC');
-                    rec = `<span style="color: #98971a">ammonia</span>`;
+                    rec = `<span style="color: #5B5BAC">ammonia</span>`;
                 } else if (resource == Resource.Organics) {
                     resource_geo.fillColor = new Color('#7FD676');
-                    rec = `<span style="color: #98971a">organics</span>`;
+                    rec = `<span style="color: #7FD676">organics</span>`;
                 } else if (resource == Resource.Platinum) {
                     resource_geo.fillColor = new Color('#ff5349');
-                    rec = `<span style="color: #98971a">platinum</span>`;
+                    rec = `<span style="color: #ff5349">platinum</span>`;
                 }
 
                 if (accu == 0) {
@@ -581,19 +581,31 @@ export class PaperMap extends StarMap {
             }
             planet_texts.set(planet, resource_html);
             planet_buffer.on('mouseenter', () => {
+                let first_point: Point;
+                let second_point: Point;
+                if (!this.on_planet) {
+                    first_point = new Point(this.current_system.location.x, this.current_system.location.y);
+                }
+                else {
+                    first_point = new Point(this.current_system.location.x + Math.cos(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius,
+                        star.location.y + Math.sin(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius)
+                }
+
+                second_point = new Point(star.location.x + Math.cos(planet.position * Math.PI / 180) * planet.orbit.radius, star.location.y + Math.sin(planet.position * Math.PI / 180) * planet.orbit.radius);
+                let distance = dist_scale * Math.sqrt((first_point.x! - second_point.x!) ** 2 + (first_point.y! - second_point.y!) ** 2);
                 if (planet == current_planet && on_planet) {
                     this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}`;
                 }
                 else {
                     if (this.to_planet(star, planet)) {
-                        this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\nlong press to travel`;
+                        this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${distance.toFixed(2)} light years away\nlong press to travel`;
                     }
                     else {
                         if (star == this.current_system) {
-                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\nunable to travel`;
+                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${distance.toFixed(2)} light years away\nunable to travel`;
                         }
                         else {
-                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\nunable to jump`;
+                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${distance.toFixed(2)} light years away\nunable to jump`;
                         }
                     }
                 }
