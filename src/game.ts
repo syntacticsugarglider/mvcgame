@@ -221,14 +221,9 @@ function generate_system(b_source: RandomProvider): System {
         let moon_count = select_random(weighted_list(count_options), source);
         let generated: boolean;
         let max_distance: number;
-
         max_distance = Math.min.apply(null, orbit_info.map(val => ((replace(Math.abs(val[0] - planet.orbit.radius)) - val[1] - val[2] * 3))));
         max_distance = Math.min(max_distance, planet.orbit.radius - 25, 150 - planet.orbit.radius);
-        // if (system.name == "gikaviz") {
-        //     console.log(orbit_info);
-        // }
         for (let i = 0; i < moon_count; i++) {
-
             generated = false;
             for (let i: number = 0; i < 20; i++) {
                 let size = rand(2, 3, source);
