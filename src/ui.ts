@@ -227,7 +227,7 @@ export class Cargo {
         el.setAttribute('class', 'module res a');
         el.setAttribute('tooltip', tooltip_of(item.name));
         this.bar.add(el);
-        el.innerHTML = `<span style="color: ${color_of(item.name)};">silica</span><div class="content">${format_mass(item.amount)}</div>`;
+        el.innerHTML = `<span style="color: ${color_of(item.name)};">${item.name}</span><div class="content">${format_mass(item.amount)}</div>`;
         this.el.querySelector('.rcap')!.before(el);
     }
 }

@@ -314,7 +314,7 @@ export function initialize(game: Game) {
     let c = new Cargo(tons(2), game.bar);
 
     c.push({
-        name: "silica",
+        name: "platinum",
         amount: kg(1500)
     });
 
