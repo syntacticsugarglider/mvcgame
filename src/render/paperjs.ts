@@ -117,6 +117,7 @@ export class PaperMap extends StarMap {
 
     add(star: System): void {
         let loc = new Point(star.location.x, star.location.y);
+        let dist_scale = 1 / 9;
         let label = new PointText(new Point(loc.x!, loc.y! + 32.5));
         let circ = new Path.Circle(loc, 15);
         circ.strokeColor = new Color('#777');
@@ -166,7 +167,7 @@ export class PaperMap extends StarMap {
         let planet_loc = new Point(0, 0);
         let growing = false;
         let on_planet = false;
-        let incr = 3;
+        let incr = 5;
         let arc_rad = 25;
         let scaler = 1;
         let planet_radius = 0;
@@ -209,7 +210,7 @@ export class PaperMap extends StarMap {
                 this.tooltip.text = "Unknown"
                 return;
             }
-            incr = -4;
+            incr = -5;
             trace_visibility = false;
             planet_buffers.visible = false;
             surround.opacity = 1;
@@ -358,20 +359,31 @@ export class PaperMap extends StarMap {
             s_resource_color = '#119999';
         }
         sun.on('mouseenter', () => {
-
-            if (this.to_star(star)) {
-                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to jump`;
+            let first_point: Point;
+            let second_point: Point;
+            if (!this.on_planet) {
+                first_point = new Point(star.location.x, star.location.y);
             }
             else {
-                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nunable to jump`;
+                first_point = new Point(star.location.x + Math.cos(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius,
+                    star.location.y + Math.sin(this.current_planet.position * Math.PI / 180) * this.current_planet.orbit.radius)
+            }
+
+            second_point = new Point(this.current_system.location.x, this.current_system.location.y);
+            let distance = dist_scale * Math.sqrt((first_point.x! - second_point.x!) ** 2 + (first_point.y! - second_point.y!) ** 2);
+            if (this.to_star(star)) {
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nlong press to jump`;
+            }
+            else {
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nunable to jump`;
             }
             if (star.active) {
                 if (on_planet) {
                     if (this.to_star(star)) {
-                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nlong press to travel`;
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nlong press to travel`;
                     }
                     else {
-                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\nunable to travel`;
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nunable to travel`;
                     }
                 }
                 else {
@@ -448,7 +460,7 @@ export class PaperMap extends StarMap {
                     sq_target = 0;
                 }
 
-                incr = 3;
+                incr = 5;
                 temp_sun = false;
                 jumping = true;
                 growing = true;
@@ -461,20 +473,30 @@ export class PaperMap extends StarMap {
                 }
             });
             planet_buffer.on('mouseup', () => {
-                incr = -4;
+                incr = -5;
             });
             let accu = 0;
             planet.resources.forEach((resource) => {
                 let resource_geo = new Path.Circle(p_loc, planet.size + accu + 3);
                 planet_geometry.insertChild(0, resource_geo);
                 let rec;
-                if (resource == Resource.Petroleum) {
-                    resource_geo.fillColor = new Color('#b16286');
-                    rec = `<span style="color: #b16286">petroleum</span>`;
-                } else if (resource == Resource.Cellulose) {
-                    resource_geo.fillColor = new Color('#98971a');
-                    rec = `<span style="color: #98971a">cellulose</span>`;
+                if (resource == Resource.Oxygen) {
+                    resource_geo.fillColor = new Color('#9CD3DC');
+                    rec = `<span style="color: #b16286">oxygen</span>`;
+                } else if (resource == Resource.Methane) {
+                    resource_geo.fillColor = new Color('#F5AF6E');
+                    rec = `<span style="color: #98971a">methane</span>`;
+                } else if (resource == Resource.Ammonia) {
+                    resource_geo.fillColor = new Color('#5B5BAC');
+                    rec = `<span style="color: #98971a">ammonia</span>`;
+                } else if (resource == Resource.Organics) {
+                    resource_geo.fillColor = new Color('#7FD676');
+                    rec = `<span style="color: #98971a">organics</span>`;
+                } else if (resource == Resource.Platinum) {
+                    resource_geo.fillColor = new Color('#ff5349');
+                    rec = `<span style="color: #98971a">platinum</span>`;
                 }
+
                 if (accu == 0) {
                     if (planet.resources.length < 3) {
                         resource_html += `${rec}`
@@ -578,7 +600,7 @@ export class PaperMap extends StarMap {
             });
 
             planet_buffer.on('mouseleave', () => {
-                incr = -4;
+                incr = -5;
             });
 
             planet_geometry.addChild(base);
@@ -613,7 +635,7 @@ export class PaperMap extends StarMap {
                 return;
             }
 
-            incr = 3;
+            incr = 5;
             jumping = true;
             sq11.remove();
             if (on_planet) {
@@ -629,7 +651,7 @@ export class PaperMap extends StarMap {
 
         });
         sun.on('mouseup', () => {
-            incr = -4;
+            incr = -5;
         });
         geometry.on('mouseenter', mouseenter);
         geometry.on('mouseleave', () => {

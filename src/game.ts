@@ -187,7 +187,7 @@ function generate_system(b_source: RandomProvider): System {
             }
             return false;
         };
-        let r_opts = [Resource.Petroleum, Resource.Cellulose];
+        let r_opts = [Resource.Ammonia, Resource.Methane, Resource.Organics, Resource.Oxygen, Resource.Platinum];
         for (let i = 0; i < resource_count; i++) {
             let res = select_random(r_opts, source);
             r_opts.splice(r_opts.indexOf(res), 1);
@@ -273,6 +273,25 @@ function generate_system(b_source: RandomProvider): System {
 
 export function initialize(game: Game) {
     let sol = new System(new Point(0, 0), 'sol', StarResource.Hydrogen, true);
+    sol.planets = [{
+        orbit: {
+            radius: 60,
+            speed: 10,
+        },
+        name: "emathh",
+        position: 0,
+        size: 10,
+        resources: [],
+        moons: [{
+            orbit: {
+                radius: 20,
+                speed: 2,
+            }, position: 0, size: 2, resource: MoonResource.Silica
+        }]
+
+
+    }]
+
     sol.active = true;
     let map = game.scene.new_map(sol);
 
