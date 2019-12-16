@@ -1,6 +1,6 @@
 import { Render, System, Resource, MoonResource, Moon, StarResource, Planet, StarMap } from './render/render';
 import { Content, Updater, Ship, Point, ContentType } from './scene';
-import { Bar, Cargo } from "./ui";
+import { Bar, Cargo, Modules } from "./ui";
 
 var vowels = ['a', 'e', 'i', 'o', 'u'];
 var consts = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'qu', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z', 'ch', 'sh', 'sv', 'yt', 'bl'];
@@ -311,19 +311,14 @@ export function initialize(game: Game) {
     }
     handle_pan(game.scene);
 
-    let c = new Cargo(tons(2), game.bar);
+    let c = new Modules(new Cargo(tons(2), game.bar), game.bar);
 
     c.push({
-        name: "platinum",
-        amount: kg(1500)
-    });
-    c.push({
-        name: "silica",
-        amount: kg(50)
-    });
-    c.push({
-        name: "platinum",
-        amount: kg(25)
+        name: 'hull', info: [['integrity', '100%']], actions: [{
+            name: 'repair',
+            description: 'repair ship hull',
+            uses: []
+        }]
     });
 
     game.set_map(map);

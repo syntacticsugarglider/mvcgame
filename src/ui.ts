@@ -1,4 +1,5 @@
 import { Vector } from './scene';
+import { Game } from './game';
 
 class Data {
     private _data: Element;
@@ -239,5 +240,54 @@ export class Cargo {
         this.bar.add(el);
         el.innerHTML = `<span style="color: ${color_of(item.name)};">${item.name}</span><div class="content">${format_mass(item.amount)}</div>`;
         rcap.before(el);
+    }
+}
+
+interface Action {
+    description: string,
+    name: string,
+    uses: CargoItem[],
+}
+
+interface Module {
+    name: string,
+    info: [string, string][],
+    actions: Action[];
+}
+
+export class Modules {
+    private before: Element;
+    private cargo: Cargo;
+    private modules: Module[];
+    private bar: Bar;
+
+    constructor(cargo: Cargo, bar: Bar) {
+        this.modules = [];
+        this.cargo = cargo;
+        this.before = document.querySelector('.add-info')!;
+        this.bar = bar;
+    }
+
+    push(m: Module): void {
+        this.modules.push(m);
+        let el = document.createElement('div');
+        el.setAttribute('class', 'module');
+        let name = document.createElement('div');
+        name.textContent = m.name;
+        el.appendChild(name);
+        m.info.forEach((m) => {
+            let i_div = document.createElement('div');
+            i_div.innerHTML = `${m[0]}: <span class="content">${m[1]}</span>`;
+            el.appendChild(i_div);
+        })
+        m.actions.forEach((a) => {
+            let i_div = document.createElement('div');
+            i_div.setAttribute('class', 'action a');
+            i_div.textContent = a.name;
+            i_div.setAttribute('tooltip', 'press to ' + a.description);
+            this.bar.add(i_div);
+            el.appendChild(i_div);
+        });
+        this.before.before(el);
     }
 }
