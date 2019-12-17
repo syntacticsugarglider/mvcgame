@@ -128,7 +128,6 @@ export class PaperMap extends StarMap {
         this.emathh = new Date(this.emathh.getTime() + ship_duration * scale_factor * 60000);
         this.bar.emathh_time = this.emathh;
         this.bar.ship_time = this.ship;
-        this.bar.emathh_dateset = this.emathh;
     }
 
     hide(): void {

@@ -110,6 +110,7 @@ export class Bar {
         let time = date.getTime() - new Date('January 1, 5032 00:00:00').getTime();
         this.time_emathh_elapsed.data = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
             Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ", Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000)).toString(), " hours ")
+        this.emathh_date.data = date.toString().slice(0, -32).concat(" PST");
     }
 
     set ship_time(date: Date) {
@@ -118,9 +119,7 @@ export class Bar {
             Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ", Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000)).toString(), " hours ")
     }
 
-    set emathh_dateset(date: Date) {
-        this.emathh_date.data = date.toString().slice(0, -32);
-    }
+
 
 
 }

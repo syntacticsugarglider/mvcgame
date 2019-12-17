@@ -301,7 +301,6 @@ export function initialize(game: Game) {
     dotter.active = true;
     game.bar.emathh_time = new Date('January 1, 5032 00:00:00');
     game.bar.ship_time = new Date('January 1, 5032 00:00:00');
-    game.bar.emathh_dateset = new Date('January 1, 5032 00:00:00');
     let map = game.scene.new_map(dotter, game.bar);
 
     let random_source = new RandomProvider(0x2F9E2B1);
