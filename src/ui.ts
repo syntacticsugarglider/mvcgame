@@ -376,12 +376,14 @@ export class Modules {
     private cargo: Cargo;
     private modules: Module[];
     private bar: Bar;
+    private add_time: (t: number, sf: number) => void;
 
-    constructor(cargo: Cargo, bar: Bar) {
+    constructor(cargo: Cargo, bar: Bar, add_time: (t: number, sf: number) => void) {
         this.modules = [];
         this.cargo = cargo;
         this.before = document.querySelector('.add-info')!;
         this.bar = bar;
+        this.add_time = add_time;
     }
 
     move(loc: Planet | System): void {
@@ -439,6 +441,7 @@ export class Modules {
                         rate_mul *= 1.1;
                         amt_mined += i_rate * rate_mul;
                         time_elapsed += rate_mul;
+                        this.add_time(rate_mul, 1);
                         this.cargo.push({ name: name, amount: i_rate * rate_mul });
                         if (this.cargo.is_full()) {
                             document.querySelector('.tooltip.content')!.innerHTML = `cargo bay full`;

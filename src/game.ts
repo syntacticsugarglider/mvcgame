@@ -1,6 +1,7 @@
 import { Render, System, Resource, MoonResource, Moon, StarResource, Planet, StarMap } from './render/render';
 import { Content, Updater, Ship, Point, ContentType } from './scene';
 import { Bar, Cargo, Modules } from "./ui";
+import { PaperMap } from './render/paperjs';
 
 var vowels = ['a', 'e', 'i', 'o', 'u'];
 var consts = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'qu', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z', 'ch', 'sh', 'sv', 'yt', 'bl'];
@@ -311,7 +312,7 @@ export function initialize(game: Game) {
     }
     handle_pan(game.scene);
 
-    let c = new Modules(new Cargo(tons(2), game.bar), game.bar);
+    let c = new Modules(new Cargo(tons(2), game.bar), game.bar, (map as PaperMap).add_time.bind(map));
 
     map.r_move_handler((e) => { c.move(e) });
 
