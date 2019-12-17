@@ -296,7 +296,6 @@ export class Cargo {
         }
         let rcap = this.el.querySelector('.rcap')!;
         let t = document.querySelector(`[data-res-name="${item.name}"]`);
-        console.log(t);
         if (t != null) {
             let n = this.resources.find((el) => el.name == item.name)!;
             n.amount += item.amount;
@@ -344,6 +343,7 @@ export class Modules {
     }
 
     move(loc: Planet | System): void {
+        console.log(this.cargo);
         if (!!(loc as any).orbit) {
             let planet = loc as Planet;
             let md = document.querySelector('.mdrone')!;
@@ -409,6 +409,7 @@ export class Modules {
             });
             n_kres.addEventListener('mouseout', () => {
                 amt_mined = 0;
+                clearInterval(int);
             });
             let name = name_of(system.star.resource);
             n_kres.innerHTML = `extract <span style="color: ${color_of(name)};">${name}</span>`;
