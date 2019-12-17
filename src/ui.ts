@@ -433,6 +433,7 @@ export class Modules {
                     rate_mul = 1;
                     document.querySelector('.tooltip.content')!.innerHTML = `mined <span class="content amt">${format_mass(amt_mined)}</span> <span style="color: ${color_of(name)};">${name}</span><br/><span class="content time">${format_time(time_elapsed)}</span> elapsed<br/>hold to accelerate`;
                     let amt = document.querySelector('.tooltip.content .amt')!;
+                    let time = document.querySelector('.tooltip.content .time')!;
                     clearInterval(int);
                     int = setInterval(() => {
                         amt_mined += i_rate * rate_mul;
@@ -445,6 +446,7 @@ export class Modules {
                             return;
                         }
                         amt.textContent = format_mass(amt_mined);
+                        time.textContent = format_time(time_elapsed);
                     }, 100);
                 }
             });
