@@ -42,7 +42,7 @@ export enum StarResource {
 }
 
 export enum Resource {
-    Oxygen,
+    Oxygen = 100,
     Methane,
     Ammonia,
     Organics,
@@ -50,7 +50,7 @@ export enum Resource {
 }
 
 export enum MoonResource {
-    Silica,
+    Silica = 200,
     Corundum,
     Hematite,
     Cobaltite,

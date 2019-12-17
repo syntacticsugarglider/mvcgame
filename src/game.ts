@@ -311,9 +311,7 @@ export function initialize(game: Game) {
 
     let c = new Modules(new Cargo(tons(2), game.bar), game.bar);
 
-    map.r_move_handler((e) => {
-        console.log(e);
-    });
+    map.r_move_handler(c.move);
 
     c.push({
         name: 'hull', info: [['integrity', '100%']], actions: [{
@@ -322,6 +320,8 @@ export function initialize(game: Game) {
             uses: []
         }]
     });
+
+    c.move(sol);
 
     game.set_map(map);
 }

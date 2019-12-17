@@ -1,5 +1,6 @@
 import { Vector } from './scene';
 import { Game } from './game';
+import { Planet, System, StarResource, MoonResource, Resource } from './render/render';
 
 class Data {
     private _data: Element;
@@ -103,6 +104,50 @@ export class Bar {
 interface CargoItem {
     name: string,
     amount: number,
+}
+
+function name_of(res: StarResource | MoonResource | Resource): string {
+    if (res < 100) {
+        let r = res as StarResource;
+        if (r == StarResource.Hydrogen) {
+            return 'hydrogen';
+        } else if (r == StarResource.Helium) {
+            return 'helium';
+        } else if (r == StarResource.Carbon) {
+            return 'carbon';
+        } else if (r == StarResource.Lithium) {
+            return 'lithium';
+        } else if (r == StarResource.Iron) {
+            return 'iron';
+        }
+    } else if (res < 200) {
+        let r = res as Resource;
+        if (r == Resource.Oxygen) {
+            return 'oxygen';
+        } else if (r == Resource.Methane) {
+            return 'methane';
+        } else if (r == Resource.Ammonia) {
+            return 'ammonia';
+        } else if (r == Resource.Organics) {
+            return 'organics';
+        } else if (r == Resource.Platinum) {
+            return 'platinum';
+        }
+    } else {
+        let r = res as MoonResource;
+        if (r == MoonResource.Silica) {
+            return 'silica';
+        } else if (r == MoonResource.Corundum) {
+            return 'corundum'
+        } else if (r == MoonResource.Hematite) {
+            return 'hematite';
+        } else if (r == MoonResource.Cobaltite) {
+            return 'cobaltite';
+        } else if (r == MoonResource.Ilmenite) {
+            return 'ilmenite'
+        }
+    }
+    return 'unknown';
 }
 
 function color_of(res: string): string {
@@ -266,6 +311,47 @@ export class Modules {
         this.cargo = cargo;
         this.before = document.querySelector('.add-info')!;
         this.bar = bar;
+    }
+
+    move(loc: Planet | System): void {
+        if (!!(loc as any).orbit) {
+            let planet = loc as Planet;
+            let md = document.querySelector('.mdrone')!;
+            document.querySelectorAll('.kres').forEach(e => {
+                e.remove();
+            });
+            planet.resources.forEach(res => {
+                let n_kres = document.createElement('div');
+                n_kres.classList.add('kres');
+                n_kres.classList.add('action');
+                n_kres.classList.add('a');
+                let name = name_of(res);
+                n_kres.innerHTML = `<div>mine <span style="color: ${color_of(name)}">${name}</span></div>`;
+                md.appendChild(n_kres);
+            });
+            planet.moons.forEach(res => {
+                let n_kres = document.createElement('div');
+                n_kres.classList.add('kres');
+                n_kres.classList.add('action');
+                n_kres.classList.add('a');
+                let name = name_of(res.resource);
+                n_kres.innerHTML = `<div>mine <span style="color: ${color_of(name)}">${name}</span></div>`;
+                md.appendChild(n_kres);
+            });
+        } else {
+            let system = loc as System;
+            document.querySelectorAll('.kres').forEach(e => {
+                e.remove();
+            });
+            let md = document.querySelector('.mdrone')!;
+            let n_kres = document.createElement('div');
+            n_kres.classList.add('kres');
+            n_kres.classList.add('action');
+            n_kres.classList.add('a');
+            let name = name_of(system.star.resource);
+            n_kres.innerHTML = `<div>extract <span style="color: ${color_of(name)};">${name}</span></div>`;
+            md.appendChild(n_kres);
+        }
     }
 
     push(m: Module): void {
