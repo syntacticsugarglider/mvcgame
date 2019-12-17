@@ -1,6 +1,6 @@
-import { Point, Content } from '../scene';
+import { Point, Content, } from '../scene';
 import { PaperMap } from './paperjs';
-import { Tooltip } from '../ui';
+import { Tooltip, Modules } from '../ui';
 
 export class Viewport {
     center: Point;
@@ -87,6 +87,7 @@ export class System {
 export abstract class StarMap {
     abstract add(star: System): void;
     abstract hide(): void;
+    abstract r_move_handler(h: (loc: System | Planet) => void): void;
 }
 
 export abstract class Render {

@@ -296,8 +296,6 @@ export function initialize(game: Game) {
                 speed: 2,
             }, position: 0, size: 2, resource: MoonResource.Silica
         }]
-
-
     }]
 
     sol.active = true;
@@ -312,6 +310,10 @@ export function initialize(game: Game) {
     handle_pan(game.scene);
 
     let c = new Modules(new Cargo(tons(2), game.bar), game.bar);
+
+    map.r_move_handler((e) => {
+        console.log(e);
+    });
 
     c.push({
         name: 'hull', info: [['integrity', '100%']], actions: [{
