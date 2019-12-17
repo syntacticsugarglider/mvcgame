@@ -1,6 +1,6 @@
 import { Point, Content, } from '../scene';
 import { PaperMap } from './paperjs';
-import { Tooltip, Modules } from '../ui';
+import { Tooltip, Modules, Bar } from '../ui';
 
 export class Viewport {
     center: Point;
@@ -109,6 +109,6 @@ export abstract class Render {
     }
     abstract add(geometry: Content): void;
     abstract show_map(map: StarMap): void;
-    abstract new_map(sol: System): StarMap;
+    abstract new_map(sol: System, bar: Bar): StarMap;
     abstract use_tooltip(tooltip: Tooltip): void;
 }

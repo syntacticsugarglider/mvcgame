@@ -280,8 +280,8 @@ function kg(tons: number): number {
 }
 
 export function initialize(game: Game) {
-    let sol = new System(new Point(0, 0), 'sol', StarResource.Hydrogen, true);
-    sol.planets = [{
+    let dotter = new System(new Point(0, 0), 'dotter', StarResource.Hydrogen, true);
+    dotter.planets = [{
         orbit: {
             radius: 60,
             speed: 10,
@@ -298,8 +298,11 @@ export function initialize(game: Game) {
         }]
     }]
 
-    sol.active = true;
-    let map = game.scene.new_map(sol);
+    dotter.active = true;
+    game.bar.emathh_time = new Date('January 1, 5032 00:00:00');
+    game.bar.ship_time = new Date('January 1, 5032 00:00:00');
+    game.bar.emathh_dateset = new Date('January 1, 5032 00:00:00');
+    let map = game.scene.new_map(dotter, game.bar);
 
     let random_source = new RandomProvider(0x2F9E2B1);
 
@@ -321,7 +324,6 @@ export function initialize(game: Game) {
         }]
     });
 
-    c.move(sol);
-
+    c.move(dotter);
     game.set_map(map);
 }

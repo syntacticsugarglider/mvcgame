@@ -2,7 +2,7 @@ import { Vector } from './scene';
 import { Game } from './game';
 import { Planet, System, StarResource, MoonResource, Resource } from './render/render';
 
-class Data {
+export class Data {
     private _data: Element;
     private _unit: Element;
 
@@ -69,6 +69,9 @@ export class Tooltip {
 
 export class Bar {
     private vel: Data;
+    private time_emathh_elapsed: Data;
+    private time_ship_elapsed: Data;
+    private emathh_date: Data;
     tooltip: Tooltip;
 
     constructor(bar: Element, show_map: () => void) {
@@ -76,6 +79,9 @@ export class Bar {
             show_map();
         });
         this.vel = new Data(bar, 'vel');
+        this.time_emathh_elapsed = new Data(bar, 'emathh_elapsed');
+        this.time_ship_elapsed = new Data(bar, 'ship_elapsed');
+        this.emathh_date = new Data(bar, 'emathh_date')
         this.tooltip = new Tooltip(bar.querySelector('.tooltip.content')!);
         bar.querySelectorAll('[tooltip]').forEach((e) => {
             e.addEventListener('mouseover', (_) => {
@@ -99,6 +105,24 @@ export class Bar {
     set acceleration(acceleration: Vector) {
         format_acc(Math.sqrt(Math.pow(acceleration.x, 2) + Math.pow(acceleration.y, 2)), this.vel);
     }
+
+    set emathh_time(date: Date) {
+        let time = date.getTime() - new Date('January 1, 5032 00:00:00').getTime();
+        this.time_emathh_elapsed.data = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
+            Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ", Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000)).toString(), " hours ")
+    }
+
+    set ship_time(date: Date) {
+        let time = date.getTime() - new Date('January 1, 5032 00:00:00').getTime();
+        this.time_ship_elapsed.data = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
+            Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ", Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000)).toString(), " hours ")
+    }
+
+    set emathh_dateset(date: Date) {
+        this.emathh_date.data = date.toString().slice(0, -32);
+    }
+
+
 }
 
 interface CargoItem {

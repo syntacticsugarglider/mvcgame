@@ -1,6 +1,6 @@
 import { Render, Viewport, StarMap, Resource, MoonResource, StarResource, Planet, System } from './render';
 import { Content, ContentType, Ship } from '../scene';
-import { Tooltip, Modules } from '../ui';
+import { Tooltip, Modules, Data, Bar } from '../ui';
 
 import { PaperScope, Matrix, Point, Path, Color, Group, PointText, Tween, Rectangle, Size } from 'paper';
 import { start } from 'repl';
@@ -51,8 +51,8 @@ export class PaperJS extends Render {
         (map as PaperMap).scene.visible = true;
     }
 
-    new_map(sol: System): StarMap {
-        let sol_map = new PaperMap(this.paper, this.tooltip!, sol)
+    new_map(sol: System, bar: Bar): StarMap {
+        let sol_map = new PaperMap(this.paper, this.tooltip!, sol, bar)
         sol_map.add(sol)
         return sol_map;
     }
@@ -76,10 +76,14 @@ export class PaperMap extends StarMap {
     private tooltip: Tooltip;
     private h: (loc: System | Planet) => void;
     private current_system: System;
+    private bar: Bar;
+    private emathh: Date;
+    private ship: Date;
+    private distance: number;
     public on_planet: boolean;
     public current_planet: Planet;
 
-    constructor(paper: PaperScope, tooltip: Tooltip, sol: System) {
+    constructor(paper: PaperScope, tooltip: Tooltip, sol: System, bar: Bar) {
         super();
         this.scene = new Group();
         this.paper = paper;
@@ -87,6 +91,9 @@ export class PaperMap extends StarMap {
         this.current_system = sol;
         this.on_planet = false;
         this.h = (_) => { };
+        this.bar = bar;
+        this.ship = new Date('January 1, 5032 00:00:00');
+        this.emathh = new Date('January 1, 5032 00:00:00');
     }
 
     r_move_handler(h: (loc: System | Planet) => void): void {
@@ -106,6 +113,8 @@ export class PaperMap extends StarMap {
 
     }
 
+
+
     to_planet(star: System, planet: Planet): boolean {
         if (this.current_system == star && ((this.current_planet != planet) || !this.on_planet)) {
             return true;
@@ -114,13 +123,21 @@ export class PaperMap extends StarMap {
 
     }
 
+    add_time(ship_duration: number, scale_factor: number): void {
+        this.ship = new Date(this.ship.getTime() + ship_duration * 60000);
+        this.emathh = new Date(this.emathh.getTime() + ship_duration * scale_factor * 60000);
+        this.bar.emathh_time = this.emathh;
+        this.bar.ship_time = this.ship;
+        this.bar.emathh_dateset = this.emathh;
+    }
+
     hide(): void {
         this.scene.visible = false;
     }
 
     add(star: System): void {
         let loc = new Point(star.location.x, star.location.y);
-        let dist_scale = 1 / 9;
+        let dist_scale = 1 / 20;
         let planet_dist_scale = 0.761035;
         let label = new PointText(new Point(loc.x!, loc.y! + 32.5));
         let circ = new Path.Circle(loc, 15);
@@ -269,6 +286,12 @@ export class PaperMap extends StarMap {
                     return;
                 }
                 if (sq_target + incr > 360) {
+                    if (temp_sun) {
+                        this.add_time(this.distance * 365 * 60 ** 2 * 24 ** 2 * 2, 1);
+                    }
+                    else {
+                        this.add_time(this.distance * 0.2127 * 365 * 24 * 60, 4.807);
+                    }
                     this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich`;
                     this.current_system = star;
                     jumping = false;
@@ -315,6 +338,7 @@ export class PaperMap extends StarMap {
                     return;
                 }
                 if (sq_target + incr > 360) {
+                    this.add_time(this.distance * 365 * 60 ** 2 * 24 ** 2 * 2, 1);
                     this.on_planet = true;
                     jumping = false;
                     sq11.remove();
@@ -372,26 +396,24 @@ export class PaperMap extends StarMap {
             let second_point: Point;
 
             first_point = new Point(this.current_system.location.x, this.current_system.location.y);
-
-
             second_point = new Point(star.location.x, star.location.y);
-            let distance = dist_scale * Math.sqrt((first_point.x! - second_point.x!) ** 2 + (first_point.y! - second_point.y!) ** 2);
+            this.distance = dist_scale * Math.sqrt((first_point.x! - second_point.x!) ** 2 + (first_point.y! - second_point.y!) ** 2);
             if (on_planet && this.current_system == star) {
-                distance = this.current_planet.orbit.radius * dist_scale * planet_dist_scale;
+                this.distance = this.current_planet.orbit.radius * dist_scale / 60 / 24 / 365;
             }
             if (this.to_star(star)) {
-                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nlong press to jump`;
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\nlong press to jump`;
             }
             else {
-                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light years away\nunable to jump`;
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\nunable to jump`;
             }
             if (star.active) {
                 if (on_planet) {
                     if (this.to_star(star)) {
-                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light minutes away\nlong press to travel`;
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\nlong press to travel`;
                     }
                     else {
-                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${distance.toFixed(2)} light minutes away\nunable to travel`;
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\nunable to travel`;
                     }
                 }
                 else {
@@ -596,14 +618,14 @@ export class PaperMap extends StarMap {
 
 
                 second_point = new Point(star.location.x, star.location.y);
-                let distance = dist_scale * Math.sqrt((first_point.x! - second_point.x!) ** 2 + (first_point.y! - second_point.y!) ** 2);
+                this.distance = dist_scale * Math.sqrt((first_point.x! - second_point.x!) ** 2 + (first_point.y! - second_point.y!) ** 2);
                 if (star == this.current_system) {
                     if (on_planet) {
-                        distance = Math.sqrt((planet.orbit.radius * Math.cos(planet.position * Math.PI / 180) - this.current_planet.orbit.radius * Math.cos(this.current_planet.position * Math.PI / 180)) ** 2 + (planet.orbit.radius * Math.sin(planet.position * Math.PI / 180) - this.current_planet.orbit.radius * Math.sin(this.current_planet.position * Math.PI / 180)) ** 2);
-                        distance = distance * planet_dist_scale * dist_scale;
+                        this.distance = Math.sqrt((planet.orbit.radius * Math.cos(planet.position * Math.PI / 180) - this.current_planet.orbit.radius * Math.cos(this.current_planet.position * Math.PI / 180)) ** 2 + (planet.orbit.radius * Math.sin(planet.position * Math.PI / 180) - this.current_planet.orbit.radius * Math.sin(this.current_planet.position * Math.PI / 180)) ** 2);
+                        this.distance = this.distance * dist_scale / 60 / 24 / 365;
                     }
                     else {
-                        distance = planet.orbit.radius * planet_dist_scale * dist_scale;
+                        this.distance = planet.orbit.radius * dist_scale / 60 / 24 / 365;
                     }
                 }
                 if (planet == current_planet && on_planet) {
@@ -611,14 +633,14 @@ export class PaperMap extends StarMap {
                 }
                 else {
                     if (this.to_planet(star, planet)) {
-                        this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(distance).toFixed(2)} light minutes away\nlong press to travel`;
+                        this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\nlong press to travel`;
                     }
                     else {
                         if (star == this.current_system) {
-                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(distance).toFixed(2)} light minutes away\nunable to travel`;
+                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\nunable to travel`;
                         }
                         else {
-                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${distance.toFixed(2)} light years away\nunable to jump`;
+                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${this.distance.toFixed(2)} light years away\nunable to jump`;
                         }
                     }
                 }
