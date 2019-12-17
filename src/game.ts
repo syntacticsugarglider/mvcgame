@@ -316,13 +316,13 @@ export function initialize(game: Game) {
 
     map.r_move_handler((e) => { c.move(e) });
 
-    c.push({
-        name: 'hull', info: [['integrity', '100%']], actions: [{
-            name: 'repair',
-            description: 'repair ship hull',
-            uses: []
-        }]
-    });
+    // c.push({
+    //     name: 'hull', info: [['integrity', '100%']], actions: [{
+    //         name: 'repair',
+    //         description: 'repair ship hull',
+    //         uses: []
+    //     }]
+    // });
 
     c.move(dotter);
     game.set_map(map);
