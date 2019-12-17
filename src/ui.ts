@@ -436,8 +436,8 @@ export class Modules {
                     let time = document.querySelector('.tooltip.content .time')!;
                     clearInterval(int);
                     int = setInterval(() => {
-                        amt_mined += i_rate * rate_mul;
                         rate_mul *= 1.1;
+                        amt_mined += i_rate * rate_mul;
                         time_elapsed += rate_mul;
                         this.cargo.push({ name: name, amount: i_rate * rate_mul });
                         if (this.cargo.is_full()) {
