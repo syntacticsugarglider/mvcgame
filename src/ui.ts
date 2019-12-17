@@ -449,7 +449,48 @@ export class Modules {
                 n_kres.classList.add('action');
                 n_kres.classList.add('a');
                 let name = name_of(res.resource);
+                n_kres.setAttribute('tooltip', 'hold to mine <span class="content">100g/h</span>');
+                let int: NodeJS.Timeout;
+                let amt_mined = 0;
+                let time_elapsed = 0;
+                let i_rate = 1.66666667;
+                let rate_mul = 1;
+                n_kres.addEventListener('mousedown', () => {
+                    if (this.cargo.is_full()) {
+                        document.querySelector('.tooltip.content')!.innerHTML = `cargo bay full`;
+                    } else {
+                        rate_mul = 1;
+                        document.querySelector('.tooltip.content')!.innerHTML = `mined <span class="content amt">${format_mass(amt_mined)}</span> <span style="color: ${color_of(name)};">${name}</span><br/><span class="content time">${format_time(time_elapsed)}</span> elapsed<br/>hold to accelerate`;
+                        let amt = document.querySelector('.tooltip.content .amt')!;
+                        let time = document.querySelector('.tooltip.content .time')!;
+                        clearInterval(int);
+                        int = setInterval(() => {
+                            rate_mul *= 1.1;
+                            amt_mined += i_rate * rate_mul;
+                            time_elapsed += rate_mul;
+                            this.add_time(rate_mul, 1);
+                            this.cargo.push({ name: name, amount: i_rate * rate_mul });
+                            if (this.cargo.is_full()) {
+                                document.querySelector('.tooltip.content')!.innerHTML = `cargo bay full`;
+                                clearInterval(int);
+                                return;
+                            }
+                            amt.textContent = format_mass(amt_mined);
+                            time.textContent = format_time(time_elapsed);
+                        }, 100);
+                    }
+                });
+                n_kres.addEventListener('mouseup', () => {
+                    document.querySelector('.tooltip.content')!.innerHTML = `mined <span class="content amt">${format_mass(amt_mined)}</span> <span style="color: ${color_of(name)};">${name}</span><br/><span class="content time">${format_time(time_elapsed)}</span> elapsed<br/>hold to resume`;
+                    clearInterval(int);
+                });
+                n_kres.addEventListener('mouseout', () => {
+                    amt_mined = 0;
+                    time_elapsed = 0;
+                    clearInterval(int);
+                });
                 n_kres.innerHTML = `<div>mine <span style="color: ${color_of(name)}">${name}</span></div>`;
+                this.bar.add(n_kres);
                 md.appendChild(n_kres);
             });
         } else {
