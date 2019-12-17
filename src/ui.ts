@@ -258,7 +258,7 @@ function format_mass(mass: number): string {
     } else {
         unit = 'g';
     }
-    return `${mass} ${unit}`;
+    return `${Math.round(mass)} ${unit}`;
 }
 
 export class Cargo {
@@ -285,16 +285,23 @@ export class Cargo {
         this.total_cap = this.capacity;
     }
 
+    is_full(): boolean {
+        return this.total_cap == this.used;
+    }
+
     push(item: CargoItem): void {
         if (this.used + item.amount > this.total_cap) {
+            this.push({ amount: this.total_cap - this.used, name: item.name });
             return;
         }
         let rcap = this.el.querySelector('.rcap')!;
         let t = document.querySelector(`[data-res-name="${item.name}"]`);
         console.log(t);
         if (t != null) {
-            this.resources.find((el) => el.name == item.name)!.amount += item.amount;
+            let n = this.resources.find((el) => el.name == item.name)!;
+            n.amount += item.amount;
             this.used += item.amount;
+            t.querySelector('.at')!.textContent = format_mass(n.amount)
             this.update_cap_display();
             return;
         }
@@ -306,7 +313,7 @@ export class Cargo {
         el.setAttribute('tooltip', tooltip_of(item.name));
         el.setAttribute('data-res-name', item.name);
         this.bar.add(el);
-        el.innerHTML = `<span style="color: ${color_of(item.name)};">${item.name}</span><div class="content">${format_mass(item.amount)}</div>`;
+        el.innerHTML = `<span style="color: ${color_of(item.name)};">${item.name}</span><div class="content at">${format_mass(item.amount)}</div>`;
         rcap.before(el);
     }
 }
@@ -371,8 +378,41 @@ export class Modules {
             n_kres.classList.add('kres');
             n_kres.classList.add('action');
             n_kres.classList.add('a');
+            n_kres.setAttribute('tooltip', 'hold to mine <span class="content">10kg/h</span>');
+            let int: NodeJS.Timeout;
+            let amt_mined = 0;
+            let rate = 166.6666668;
+            n_kres.addEventListener('mousedown', () => {
+                if (this.cargo.is_full()) {
+                    document.querySelector('.tooltip.content')!.innerHTML = `cargo bay full`;
+                } else {
+                    rate = 166.6666668;
+                    document.querySelector('.tooltip.content')!.innerHTML = `mined <span class="content amt">${format_mass(amt_mined)}</span> <span style="color: ${color_of(name)};">${name}</span><br/>10h elapsed<br/>hold to accelerate`;
+                    let amt = document.querySelector('.tooltip.content .amt')!;
+                    clearInterval(int);
+                    int = setInterval(() => {
+                        amt_mined += rate;
+                        rate *= 1.1;
+                        this.cargo.push({ name: name, amount: rate });
+                        if (this.cargo.is_full()) {
+                            document.querySelector('.tooltip.content')!.innerHTML = `cargo bay full`;
+                            clearInterval(int);
+                            return;
+                        }
+                        amt.textContent = format_mass(amt_mined);
+                    }, 100);
+                }
+            });
+            n_kres.addEventListener('mouseup', () => {
+                document.querySelector('.tooltip.content')!.innerHTML = `mined <span class="content amt">${format_mass(amt_mined)}</span> <span style="color: ${color_of(name)};">${name}</span><br/>10h elapsed<br/>hold to resume`;
+                clearInterval(int);
+            });
+            n_kres.addEventListener('mouseout', () => {
+                amt_mined = 0;
+            });
             let name = name_of(system.star.resource);
-            n_kres.innerHTML = `<div>extract <span style="color: ${color_of(name)};">${name}</span></div>`;
+            n_kres.innerHTML = `extract <span style="color: ${color_of(name)};">${name}</span>`;
+            this.bar.add(n_kres);
             md.appendChild(n_kres);
         }
     }
