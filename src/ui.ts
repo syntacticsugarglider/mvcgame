@@ -42,6 +42,26 @@ function format_acc(speed: number, element: Data) {
     element.data = speed.toFixed(2);
 }
 
+function format_time_taken(time: number): string {
+    let temp_string = "";
+    let temp_num = Math.floor(time / (365 * 24 * 3600 * 1000));
+    if (temp_num != 0) {
+        temp_string = temp_string.concat(temp_num.toString(), " years ");
+    }
+    temp_num = Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000));
+    if (temp_num != 0) {
+        temp_string = temp_string.concat(temp_num.toString(), " days ");
+    }
+    temp_num = Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000))
+
+    temp_string = temp_string.concat(temp_num.toString(), " hours ");
+
+
+    return temp_string;
+
+
+}
+
 export class Tooltip {
     private element: Element;
 
@@ -112,27 +132,20 @@ export class Bar {
 
     set emathh_time(date: Date) {
         let time = date.getTime() - new Date('January 1, 5032 00:00:00').getTime();
-        this.time_emathh_elapsed.data = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-            Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ", Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000)).toString(), " hours ")
+        this.time_emathh_elapsed.data = format_time_taken(time)
         this.emathh_date.data = date.toString().slice(0, -32).concat(" PST");
     }
 
     set ship_time(date: Date) {
         let time = date.getTime() - new Date('January 1, 5032 00:00:00').getTime();
-        this.time_ship_elapsed.data = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-            Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ", Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000)).toString(), " hours ")
+
+        this.time_ship_elapsed.data = format_time_taken(time);
     }
 
     set fuel_set(fuel: number) {
         this.fuel_percentage.data = (fuel / 500000 * 100).toFixed(0);
-        if (fuel >= 1000) {
-            this.fuel.data = Math.floor((fuel / 1000)).toFixed(0);
-            this.fuel.unit = " kg";
-        }
-        else {
-            this.fuel.data = fuel.toFixed(2);
-            this.fuel.unit = " g"
-        }
+        this.fuel.data = format_mass(fuel);
+        this.fuel.unit = "";
     }
 
 
