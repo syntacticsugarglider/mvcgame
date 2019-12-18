@@ -222,7 +222,8 @@ export class PaperMap extends StarMap {
         let trace_visibility = true;
         let mouseenter = () => {
             if (!this.update_knowns(star, dist_scale)) {
-                this.tooltip.text = `<span class="content">${star.star.name}</span>\nno data`;
+                this.distance = dist_scale * Math.sqrt((this.current_system.location.x - star.location.x) ** 2 + (this.current_system.location.y - star.location.y) ** 2)
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\nno data`;
                 this.tooltip.show();
                 return;
             }
