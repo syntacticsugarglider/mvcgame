@@ -122,8 +122,8 @@ export function handle_pan(scene: Render) {
     canvas.addEventListener('touchmove', (e) => {
         if (panning) {
             let center = scene.center;
-            center.x -= e.touches[0].clientX - center.x;
-            center.y -= e.touches[0].clientY - center.y;
+            center.x -= e.touches[0].clientX + center.x;
+            center.y -= e.touches[0].clientY + center.y;
             scene.center = center;
         }
     });
