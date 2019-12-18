@@ -125,6 +125,8 @@ export class Bar {
 
     set fuel_set(fuel: number) {
         this.fuel_percentage.data = (fuel / 500000 * 100).toFixed(0);
+        console.log(document.body.style);
+        document.body.style.setProperty('--fuel-p', `${(100 - (fuel / 500000 * 100)).toFixed(0)}%`);
         if (fuel >= 1000) {
             this.fuel.data = Math.floor((fuel / 1000)).toFixed(0);
             this.fuel.unit = " kg";

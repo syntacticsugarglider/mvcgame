@@ -25,6 +25,7 @@
             --background-accent-2: #333;
             --fg: #777;
             --bg-text: #eee;
+            --fuel-p: 0%;
             --bg-text-accent: #aaa;
             --fg-accent: #555;
             --fg-text: #111;
@@ -119,7 +120,7 @@
         .progress::after {
             content: '';
             display: block;
-            width: 30%;
+            width: var(--fuel-p);
             height: 100%;
             position: absolute;
             top: 0;
