@@ -162,7 +162,7 @@ function hash(item: string): number {
 }
 
 function generate_system(b_source: RandomProvider): System {
-    let location = new Point(rand(-4000, 4000, b_source), rand(-4000, 4000, b_source));
+    let location = new Point(rand(-2000, 2000, b_source), rand(-2000, 2000, b_source));
     let seed = hash(`${location.x}${location.y}`);
     let source = new RandomProvider(seed);
     let resource = select_random(weighted_list([[StarResource.Hydrogen, 5], [StarResource.Helium, 4], [StarResource.Carbon, 3], [StarResource.Lithium, 2], [StarResource.Iron, 1]]), source);
@@ -301,7 +301,7 @@ export function initialize(game: Game) {
 
     dotter.active = true;
 
-    let final_star = new System(new Point(4000, -4000), 'cattail', StarResource.MetallicHydrogen, false);
+    let final_star = new System(new Point(2000, -2000), 'cattail', StarResource.MetallicHydrogen, false);
 
     game.bar.emathh_time = new Date('January 1, 5032 00:00:00');
     game.bar.ship_time = new Date('January 1, 5032 00:00:00');
@@ -309,7 +309,7 @@ export function initialize(game: Game) {
 
     let random_source = new RandomProvider(0x2F9E2B1);
 
-    for (let i = 0; i < 600; i++) {
+    for (let i = 0; i < 100; i++) {
         let system = generate_system(random_source);
         map.add(system);
     }
