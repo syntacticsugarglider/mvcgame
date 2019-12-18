@@ -1,6 +1,6 @@
 import { Render, Viewport, StarMap, Resource, MoonResource, StarResource, Planet, System } from './render';
 import { Content, ContentType, Ship } from '../scene';
-import { Tooltip, Modules, Data, Bar } from '../ui';
+import { Tooltip, Modules, Data, Bar, format_time_taken } from '../ui';
 
 import { PaperScope, Matrix, Point, Path, Color, Group, PointText, Tween, Rectangle, Size } from 'paper';
 import { start } from 'repl';
@@ -436,11 +436,9 @@ export class PaperMap extends StarMap {
                 else fuel_text = (this.distance * fuel_scale).toFixed(2).concat(" g");
             }
             time = this.distance * 0.2127 * 365 * 24 * 3600 * 1000;
-            duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
+            duration_text = format_time_taken(time);
             time = this.distance * 0.2127 * 4.807 * 365 * 24 * 3600 * 1000;
-            duration_emathh_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
+            duration_emathh_text = format_time_taken(time);
             if (this.to_star(star)) {
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nlong press to jump`;
             }
@@ -450,8 +448,7 @@ export class PaperMap extends StarMap {
             if (star.active) {
                 if (on_planet) {
                     time = this.distance * 365 * 60 ** 2 * 24 ** 2 * ion_scaler * 60000;
-                    duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                        Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
+                    duration_text = format_time_taken(time);
                     if (this.distance * fuel_scale > this.fuel) {
                         this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\nnot enough fuel`;
                     }
@@ -693,8 +690,7 @@ export class PaperMap extends StarMap {
                 else {
                     if (this.to_planet(star, planet)) {
                         time = this.distance * 365 * 60 ** 2 * 24 ** 2 * ion_scaler * 1000 * 60;
-                        duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                            Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
+                        duration_text = format_time_taken(time);
                         this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\n${fuel_text!} of fuel lost\n${duration_text}expended for ship\n${duration_text}expended for emathh\nlong press to travel`;
                     }
                     else if (this.distance * fuel_scale > this.fuel && star == this.current_system) {

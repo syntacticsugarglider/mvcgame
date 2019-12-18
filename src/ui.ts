@@ -42,20 +42,24 @@ function format_acc(speed: number, element: Data) {
     element.data = speed.toFixed(2);
 }
 
-function format_time_taken(time: number): string {
+export function format_time_taken(time: number): string {
     let temp_string = "";
     let temp_num = Math.floor(time / (365 * 24 * 3600 * 1000));
     if (temp_num != 0) {
         temp_string = temp_string.concat(temp_num.toString(), " years ");
     }
     temp_num = Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000));
-    if (temp_num != 0) {
+    if (temp_num != 0 || temp_string.length != 0) {
         temp_string = temp_string.concat(temp_num.toString(), " days ");
     }
+
     temp_num = Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000))
-
-    temp_string = temp_string.concat(temp_num.toString(), " hours ");
-
+    if (temp_num != 0 || temp_string.length != 0) {
+        temp_string = temp_string.concat(temp_num.toString(), " hours ");
+    }
+    else {
+        temp_string = "less than an hour";
+    }
 
     return temp_string;
 
