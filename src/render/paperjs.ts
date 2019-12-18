@@ -103,12 +103,13 @@ export class PaperMap extends StarMap {
         this.h = h;
     }
 
-    to_star(star: System, dist_scale: number): boolean {
-        if (star.star.known && !this.on_planet && this.current_system != star) {
-            if (dist_scale * Math.sqrt((star.location.x - this.current_system.location.x) ** 2 + (star.location.y - this.current_system.location.y) ** 2) > 30) {
-                return false;
+    to_star(star: System): boolean {
+        if (!this.on_planet && this.current_system != star) {
+            if (star.star.known) {
+                return true;
             }
-            return true;
+
+            return false;
         }
 
         if (this.on_planet && star == this.current_system) {
@@ -118,6 +119,18 @@ export class PaperMap extends StarMap {
 
         return false;
 
+    }
+
+    update_knowns(star: System, dist_scale: number): boolean {
+        if (star.star.known) {
+            return true;
+        }
+        if (dist_scale * Math.sqrt((star.location.x - this.current_system.location.x) ** 2 + (star.location.y - this.current_system.location.y) ** 2) < 40) {
+            star.star.known = true;
+            return true
+        }
+
+        return false;
     }
 
 
@@ -208,7 +221,7 @@ export class PaperMap extends StarMap {
         let temp_sun = false;
         let trace_visibility = true;
         let mouseenter = () => {
-            if (!star.star.known) {
+            if (!this.update_knowns(star, dist_scale)) {
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\nno data`;
                 this.tooltip.show();
                 return;
@@ -392,6 +405,9 @@ export class PaperMap extends StarMap {
         if (star.star.resource == StarResource.Hydrogen) {
             s_resource_name = 'hydrogen';
             s_resource_color = '#ffb61c';
+        } else if (star.star.resource == StarResource.MetallicHydrogen) {
+            s_resource_name = 'metallic hydrogen';
+            s_resource_color = '#c4cace';
         } else if (star.star.resource == StarResource.Helium) {
             s_resource_name = 'helium';
             s_resource_color = '#ff831c';
@@ -427,7 +443,7 @@ export class PaperMap extends StarMap {
             time = this.distance * 0.2127 * 4.807 * 365 * 24 * 3600 * 1000;
             duration_emathh_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
                 Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
-            if (this.to_star(star, dist_scale)) {
+            if (this.to_star(star)) {
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nlong press to jump`;
             }
             else {
@@ -441,7 +457,7 @@ export class PaperMap extends StarMap {
                     if (this.distance * fuel_scale > this.fuel) {
                         this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\nnot enough fuel`;
                     }
-                    else if (this.to_star(star, dist_scale)) {
+                    else if (this.to_star(star)) {
                         this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\n${fuel_text!} of fuel lost\n${duration_text}expended for ship\n${duration_text}expended for emathh\nlong press to travel`;
                     }
 
@@ -732,7 +748,7 @@ export class PaperMap extends StarMap {
         });
 
         sun.on('mousedown', () => {
-            if (sq12.visible || !this.to_star(star, dist_scale)) {
+            if (sq12.visible || !this.to_star(star)) {
                 return;
             }
             if (on_planet && (this.distance * fuel_scale) > this.fuel) {

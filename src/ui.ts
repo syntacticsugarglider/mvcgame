@@ -156,6 +156,8 @@ function name_of(res: StarResource | MoonResource | Resource): string {
             return 'lithium';
         } else if (r == StarResource.Iron) {
             return 'iron';
+        } else if (r == StarResource.MetallicHydrogen) {
+            return 'metallic hydrogen';
         }
     } else if (res < 200) {
         let r = res as Resource;
@@ -194,6 +196,8 @@ function color_of(res: string): string {
         return '#ff831c';
     } else if (res == 'carbon') {
         return '#ffffff';
+    } else if (res == 'metallic hydrogen') {
+        return '#c4cace';
     } else if (res == 'lithium') {
         return '#ff6b6b';
     } else if (res == 'iron') {

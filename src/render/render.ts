@@ -38,7 +38,8 @@ export enum StarResource {
     Helium,
     Carbon,
     Lithium,
-    Iron
+    Iron,
+    MetallicHydrogen
 }
 
 export enum Resource {
