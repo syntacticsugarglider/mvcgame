@@ -214,7 +214,7 @@ export class PaperMap extends StarMap {
         let planet_loc = new Point(0, 0);
         let growing = false;
         let on_planet = false;
-        let incr = 5;
+        let incr = 10;
         let arc_rad = 25;
         let scaler = 1;
         let planet_radius = 0;
@@ -257,7 +257,7 @@ export class PaperMap extends StarMap {
                 this.tooltip.text = "Unknown"
                 return;
             }
-            incr = -5;
+            incr = -10;
             trace_visibility = false;
             planet_buffers.visible = false;
             surround.opacity = 1;
@@ -542,7 +542,7 @@ export class PaperMap extends StarMap {
                     sq_target = 0;
                 }
 
-                incr = 5;
+                incr = 10;
                 temp_sun = false;
                 jumping = true;
                 growing = true;
@@ -555,7 +555,7 @@ export class PaperMap extends StarMap {
                 }
             });
             planet_buffer.on('mouseup', () => {
-                incr = -5;
+                incr = -10;
             });
             let accu = 0;
             planet.resources.forEach((resource) => {
@@ -714,7 +714,7 @@ export class PaperMap extends StarMap {
             });
 
             planet_buffer.on('mouseleave', () => {
-                incr = -5;
+                incr = -10;
             });
 
             planet_geometry.addChild(base);
@@ -755,7 +755,7 @@ export class PaperMap extends StarMap {
                 return;
             }
 
-            incr = 5;
+            incr = 10;
             jumping = true;
             sq11.remove();
             if (on_planet) {
@@ -771,7 +771,7 @@ export class PaperMap extends StarMap {
 
         });
         sun.on('mouseup', () => {
-            incr = -5;
+            incr = -10;
         });
         geometry.on('mouseenter', mouseenter);
         geometry.on('mouseleave', () => {
