@@ -94,7 +94,6 @@ export class Game {
 export function handle_pan(scene: Render) {
     let panning = false;
     let canvas = document.querySelector('canvas')!;
-    let prev_center = new Point(0, 0);
     canvas.addEventListener('mousedown', () => {
         panning = true;
         canvas.classList.add('grabbed');
@@ -123,9 +122,8 @@ export function handle_pan(scene: Render) {
     canvas.addEventListener('touchmove', (e) => {
         if (panning) {
             let center = scene.center;
-            prev_center = center;
-            center.x -= e.touches[0].clientX - prev_center.x;
-            center.y -= e.touches[0].clientY - prev_center.y;
+            center.x -= e.touches[0].clientX - center.x;
+            center.y -= e.touches[0].clientY - center.y;
             scene.center = center;
         }
     });
