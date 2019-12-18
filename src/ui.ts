@@ -72,6 +72,7 @@ export class Bar {
     private time_emathh_elapsed: Data;
     private time_ship_elapsed: Data;
     private emathh_date: Data;
+    private fuel: Data;
     tooltip: Tooltip;
 
     constructor(bar: Element, show_map: () => void) {
@@ -82,6 +83,7 @@ export class Bar {
         this.time_emathh_elapsed = new Data(bar, 'emathh_elapsed');
         this.time_ship_elapsed = new Data(bar, 'ship_elapsed');
         this.emathh_date = new Data(bar, 'emathh_date')
+        this.fuel = new Data(bar, "fuel");
         this.tooltip = new Tooltip(bar.querySelector('.tooltip.content')!);
         bar.querySelectorAll('[tooltip]').forEach((e) => {
             e.addEventListener('mouseover', (_) => {
@@ -117,6 +119,17 @@ export class Bar {
         let time = date.getTime() - new Date('January 1, 5032 00:00:00').getTime();
         this.time_ship_elapsed.data = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
             Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ", Math.floor((time % (24 * 3600 * 1000)) / (3600 * 1000)).toString(), " hours ")
+    }
+
+    set fuel_set(fuel: number) {
+        if (fuel >= 1000) {
+            this.fuel.data = Math.floor((fuel / 1000)).toFixed(2);
+            this.fuel.unit = " kg";
+        }
+        else {
+            this.fuel.data = fuel.toFixed(2);
+            this.fuel.unit = " g"
+        }
     }
 
 
