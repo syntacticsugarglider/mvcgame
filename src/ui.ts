@@ -73,6 +73,7 @@ export class Bar {
     private time_ship_elapsed: Data;
     private emathh_date: Data;
     private fuel: Data;
+    private fuel_percentage: Data;
     tooltip: Tooltip;
 
     constructor(bar: Element, show_map: () => void) {

@@ -103,14 +103,18 @@ export class PaperMap extends StarMap {
         this.h = h;
     }
 
-    to_star(star: System): boolean {
+    to_star(star: System, dist_scale: number): boolean {
         if (star.star.known && !this.on_planet && this.current_system != star) {
+            if (dist_scale * Math.sqrt((star.location.x - this.current_system.location.x) ** 2 + (star.location.y - this.current_system.location.y) ** 2) > 30) {
+                return false;
+            }
             return true;
         }
 
         if (this.on_planet && star == this.current_system) {
             return true;
         }
+
 
         return false;
 
@@ -423,7 +427,7 @@ export class PaperMap extends StarMap {
             time = this.distance * 0.2127 * 4.807 * 365 * 24 * 3600 * 1000;
             duration_emathh_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
                 Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
-            if (this.to_star(star)) {
+            if (this.to_star(star, dist_scale)) {
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nlong press to jump`;
             }
             else {
@@ -437,7 +441,7 @@ export class PaperMap extends StarMap {
                     if (this.distance * fuel_scale > this.fuel) {
                         this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\nnot enough fuel`;
                     }
-                    else if (this.to_star(star)) {
+                    else if (this.to_star(star, dist_scale)) {
                         this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\n${fuel_text!} of fuel lost\n${duration_text}expended for ship\n${duration_text}expended for emathh\nlong press to travel`;
                     }
 
@@ -728,7 +732,7 @@ export class PaperMap extends StarMap {
         });
 
         sun.on('mousedown', () => {
-            if (sq12.visible || !this.to_star(star)) {
+            if (sq12.visible || !this.to_star(star, dist_scale)) {
                 return;
             }
             if (on_planet && (this.distance * fuel_scale) > this.fuel) {
