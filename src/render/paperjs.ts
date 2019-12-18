@@ -137,7 +137,8 @@ export class PaperMap extends StarMap {
     add(star: System): void {
         let loc = new Point(star.location.x, star.location.y);
         let dist_scale = 1 / 20;
-        let planet_dist_scale = 0.761035;
+        let planet_dist_scale = 0.761035 * 2;
+        let ion_scaler = 2;
         let label = new PointText(new Point(loc.x!, loc.y! + 32.5));
         let circ = new Path.Circle(loc, 15);
         circ.strokeColor = new Color('#777');
@@ -414,11 +415,23 @@ export class PaperMap extends StarMap {
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nlong press to jump`;
             }
             else {
+                time = this.distance * 0.2127 * 365 * 24 * 3600 * 1000;
+                if (this.on_planet) {
+                    time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
+                }
+                duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
+                    Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
+                time = this.distance * 0.2127 * 4.807 * 365 * 24 * 3600 * 1000;
+                if (this.on_planet) {
+                    time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
+                }
+                duration_emathh_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
+                    Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nunable to jump`;
             }
             if (star.active) {
                 if (on_planet) {
-                    time = this.distance * 365 * 60 ** 2 * 24 ** 2 * 2 * 60000;
+                    time = this.distance * 365 * 60 ** 2 * 24 ** 2 * ion_scaler * 60000;
                     duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
                         Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
                     if (this.to_star(star)) {
@@ -648,26 +661,35 @@ export class PaperMap extends StarMap {
                 }
                 else {
                     if (this.to_planet(star, planet)) {
-                        time = this.distance * 365 * 60 ** 2 * 24 ** 2 * 2 * 1000 * 60;
+                        time = this.distance * 365 * 60 ** 2 * 24 ** 2 * ion_scaler * 1000 * 60;
                         duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
                             Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
                         this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\n${duration_text}expended for ship\n${duration_text}expended for emathh\nlong press to travel`;
                     }
                     else {
                         if (star == this.current_system) {
-                            time = this.distance * 365 * 60 ** 2 * 24 ** 2 * 2 * 1000 * 60;
+                            time = this.distance * 365 * 60 ** 2 * 24 ** 2 * ion_scaler * 1000 * 60;
+                            if (this.on_planet) {
+                                time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
+                            }
                             duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
                                 Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
                             this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\n${duration_text}expended for ship\n${duration_text}expended for emathh\nunable to travel`;
                         }
                         else {
                             time = this.distance * 0.2127 * 365 * 24 * 3600 * 1000;
-                            time += planet.orbit.radius * dist_scale * 60 * 24 * 2 * 1000 * 60;
+                            time += planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
+                            if (this.on_planet) {
+                                time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
+                            }
                             duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
                                 Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
 
                             time = this.distance * 0.2127 * 4.807 * 365 * 24 * 3600 * 1000;
-                            time += planet.orbit.radius * dist_scale * 60 * 24 * 2 * 1000 * 60;
+                            time += planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
+                            if (this.on_planet) {
+                                time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
+                            }
                             duration_emathh_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
                                 Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
                             this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nunable to jump`;
