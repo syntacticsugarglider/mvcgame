@@ -415,19 +415,7 @@ export class PaperMap extends StarMap {
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nlong press to jump`;
             }
             else {
-                time = this.distance * 0.2127 * 365 * 24 * 3600 * 1000;
-                if (this.on_planet) {
-                    time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
-                }
-                duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                    Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
-                time = this.distance * 0.2127 * 4.807 * 365 * 24 * 3600 * 1000;
-                if (this.on_planet) {
-                    time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
-                }
-                duration_emathh_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                    Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
-                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nunable to jump`;
+                this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\nunable to jump`;
             }
             if (star.active) {
                 if (on_planet) {
@@ -438,7 +426,7 @@ export class PaperMap extends StarMap {
                         this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\n${duration_text}expended for ship\n${duration_text}expended for emathh\nlong press to travel`;
                     }
                     else {
-                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\n${duration_text}expended for ship\n${duration_text}expended for emathh\nunable to travel`;
+                        this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${(this.distance * planet_dist_scale * 24 * 60 * 365).toFixed(2)} light minutes away\nunable to travel`;
                     }
                 }
                 else {
@@ -668,31 +656,10 @@ export class PaperMap extends StarMap {
                     }
                     else {
                         if (star == this.current_system) {
-                            time = this.distance * 365 * 60 ** 2 * 24 ** 2 * ion_scaler * 1000 * 60;
-                            if (this.on_planet) {
-                                time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
-                            }
-                            duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                                Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
-                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\n${duration_text}expended for ship\n${duration_text}expended for emathh\nunable to travel`;
+                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\nunable to travel`;
                         }
                         else {
-                            time = this.distance * 0.2127 * 365 * 24 * 3600 * 1000;
-                            time += planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
-                            if (this.on_planet) {
-                                time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
-                            }
-                            duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                                Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
-
-                            time = this.distance * 0.2127 * 4.807 * 365 * 24 * 3600 * 1000;
-                            time += planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
-                            if (this.on_planet) {
-                                time += this.current_planet.orbit.radius * dist_scale * 60 * 24 * ion_scaler * 1000 * 60;
-                            }
-                            duration_emathh_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
-                                Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
-                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${this.distance.toFixed(2)} light years away\n${duration_text}expended for ship\n${duration_emathh_text}expended for emathh\nunable to jump`;
+                            this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${this.distance.toFixed(2)} light years away\nunable to jump`;
                         }
                     }
                 }
