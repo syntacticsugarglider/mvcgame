@@ -151,11 +151,8 @@ export class Bar {
     set fuel_set(fuel: number) {
         this.fuel_amt = fuel;
         this.fuel_percentage.data = (fuel / 500000 * 100).toFixed(0);
-<<<<<<< HEAD
-=======
         this.fuel.data = format_mass(fuel);
         this.fuel.unit = "";
->>>>>>> f041c38ce578e6c8ecddc27b38d37e1e4d0fc492
         document.body.style.setProperty('--fuel-p', `${(100 - (fuel / 500000 * 100)).toFixed(0)}%`);
     }
 
