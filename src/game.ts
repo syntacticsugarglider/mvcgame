@@ -161,8 +161,9 @@ function hash(item: string): number {
     return hash;
 }
 
-function generate_system(b_source: RandomProvider): System {
+function generate_system(b_source: RandomProvider, locations: Point[]): System {
     let location = new Point(rand(-2000, 2000, b_source), rand(-2000, 2000, b_source));
+
     let seed = hash(`${location.x}${location.y}`);
     let source = new RandomProvider(seed);
     let resource = select_random(weighted_list([[StarResource.Hydrogen, 5], [StarResource.Helium, 4], [StarResource.Carbon, 3], [StarResource.Lithium, 2], [StarResource.Iron, 1]]), source);
@@ -308,10 +309,17 @@ export function initialize(game: Game) {
     let map = game.scene.new_map(dotter, game.bar);
 
     let random_source = new RandomProvider(0x2F9E2B1);
+    let locations = [];
+    locations.push(final_star.location);
+    locations.push(dotter.location);
 
     for (let i = 0; i < 100; i++) {
-        let system = generate_system(random_source);
-        map.add(system);
+        let system = generate_system(random_source, locations);
+        if (Math.min.apply(null, locations.map(val => Math.max(Math.abs(val.x - system.location.x) - 50, Math.abs(val.y - system.location.y) - 50))) >= 0) {
+            map.add(system);
+            locations.push(system.location);
+        }
+
     }
     map.add(final_star);
     handle_pan(game.scene);
