@@ -189,7 +189,7 @@ export class PaperMap extends StarMap {
         let sq5 = new Path.Circle(loc, 12.5);
         let sq6 = new Path.Circle(loc, 12.5);
         let sq7 = new Path.Circle(loc, 7);
-        let alcub_max = 60;
+        let alcub_max = 80;
         let sq8 = new Path.RegularPolygon(loc, 4, 148);
         let sq9 = new Path.RegularPolygon(loc, 4, 148);
         let sq10 = new Path.Circle(loc, 7);
@@ -691,14 +691,14 @@ export class PaperMap extends StarMap {
                     this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}`;
                 }
                 else {
-                    if (this.distance * fuel_scale > this.fuel) {
-                        this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\nnot enough fuel`;
-                    }
-                    else if (this.to_planet(star, planet)) {
+                    if (this.to_planet(star, planet)) {
                         time = this.distance * 365 * 60 ** 2 * 24 ** 2 * ion_scaler * 1000 * 60;
                         duration_text = Math.floor(time / (365 * 24 * 3600 * 1000)).toString().concat(" years ",
                             Math.floor((time % (365 * 24 * 3600 * 1000)) / (24 * 3600 * 1000)).toString(), " days ")
                         this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\n${fuel_text!} of fuel lost\n${duration_text}expended for ship\n${duration_text}expended for emathh\nlong press to travel`;
+                    }
+                    else if (this.distance * fuel_scale > this.fuel && star == this.current_system) {
+                        this.tooltip.text = `<span class="content">${planet.name}</span>\n${planet_texts.get(planet)}\n${(this.distance * planet_dist_scale * 60 * 24 * 365).toFixed(2)} light minutes away\nnot enough fuel`;
                     }
                     else {
                         if (star == this.current_system) {
