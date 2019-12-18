@@ -73,6 +73,7 @@ export class Bar {
     private time_ship_elapsed: Data;
     private emathh_date: Data;
     private fuel: Data;
+    fuel_amt: number;
     private fuel_percentage: Data;
     tooltip: Tooltip;
 
@@ -81,13 +82,14 @@ export class Bar {
             show_map();
         });
         this.vel = new Data(bar, 'vel');
+        this.fuel_amt = 0;
         this.time_emathh_elapsed = new Data(bar, 'emathh_elapsed');
         this.time_ship_elapsed = new Data(bar, 'ship_elapsed');
         this.emathh_date = new Data(bar, 'emathh_date')
         this.fuel = new Data(bar, "fuel");
         this.fuel_percentage = new Data(bar, "fuel_per");
         this.tooltip = new Tooltip(bar.querySelector('.tooltip.content')!);
-        bar.querySelectorAll('[tooltip]').forEach((e) => {
+        document.querySelectorAll('[tooltip]').forEach((e) => {
             e.addEventListener('mouseover', (_) => {
                 this.tooltip.set_from(e);
             });
@@ -124,8 +126,8 @@ export class Bar {
     }
 
     set fuel_set(fuel: number) {
+        this.fuel_amt = fuel;
         this.fuel_percentage.data = (fuel / 500000 * 100).toFixed(0);
-        console.log(document.body.style);
         document.body.style.setProperty('--fuel-p', `${(100 - (fuel / 500000 * 100)).toFixed(0)}%`);
         if (fuel >= 1000) {
             this.fuel.data = Math.floor((fuel / 1000)).toFixed(0);
@@ -353,6 +355,26 @@ export class Cargo {
         return this.total_cap == this.used;
     }
 
+    reduce(name: string, amt: number) {
+        this.resources.forEach((res) => {
+            if (res.name == name) {
+                res.amount -= amt;
+                if (res.amount == 0) {
+                    this.resources.splice(this.resources.indexOf(res), 1);
+                    document.querySelector(`[data-res-name="${name}"]`)!.remove();
+
+                } else {
+                    this.update(name, res.amount);
+                }
+            }
+        });
+    }
+
+    update(name: string, amt: number): void {
+        let t = document.querySelector(`[data-res-name="${name}"]`)!;
+        t.querySelector('.at')!.textContent = format_mass(amt);
+    }
+
     push(item: CargoItem): void {
         if (this.used + item.amount > this.total_cap) {
             this.push({ amount: this.total_cap - this.used, name: item.name });
@@ -378,6 +400,19 @@ export class Cargo {
         this.bar.add(el);
         el.innerHTML = `<span style="color: ${color_of(item.name)};">${item.name}</span><div class="content at">${format_mass(item.amount)}</div>`;
         rcap.before(el);
+    }
+
+    amt_of(resource: string): number {
+        let m = 0;
+        let k = this.resources.some((res) => {
+            if (res.name == resource) {
+                m = res.amount;
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return m;
     }
 }
 
@@ -406,6 +441,19 @@ export class Modules {
         this.before = document.querySelector('.add-info')!;
         this.bar = bar;
         this.add_time = add_time;
+        document.querySelector('.refuel')!.addEventListener('click', () => {
+            let hy = this.cargo.amt_of('hydrogen');
+            let n_hy;
+            if (this.bar.fuel_amt + hy >= 500000) {
+                n_hy = 500000 - this.bar.fuel_amt;
+            } else {
+                n_hy = hy;
+            }
+            if (hy > 0) {
+                this.bar.fuel_set = this.bar.fuel_amt + n_hy;
+                this.cargo.reduce('hydrogen', n_hy);
+            }
+        });
     }
 
     move(loc: Planet | System): void {

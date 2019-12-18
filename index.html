@@ -303,6 +303,11 @@
         }
 
         .hidden {
+            z-index: -1;
+            visibility: hidden;
+        }
+
+        .ico.hidden {
             display: none;
         }
     </style>
@@ -311,6 +316,11 @@
         <div class="internals">
             <div class="module mdrone">
                 <div>mining drone</div>
+            </div>
+            <div class="module ie">
+                <div>ion thrusters</div>
+                <div class="refuel action a" tooltip="press to refuel in-system thrusters with hydrogen">
+                    refuel</div>
             </div>
             <div class="encompass cargo">
                 cargo
@@ -326,7 +336,7 @@
         </div>
     </div>
     <div class="container">
-        <canvas resize></canvas>
+        <canvas class="hidden" resize></canvas>
         <div class="bar container">
             <div class="bar content">
                 <div class="tooltip container">
