@@ -85,6 +85,7 @@ export class Bar {
         this.time_ship_elapsed = new Data(bar, 'ship_elapsed');
         this.emathh_date = new Data(bar, 'emathh_date')
         this.fuel = new Data(bar, "fuel");
+        this.fuel_percentage = new Data(bar, "fuel_per");
         this.tooltip = new Tooltip(bar.querySelector('.tooltip.content')!);
         bar.querySelectorAll('[tooltip]').forEach((e) => {
             e.addEventListener('mouseover', (_) => {
@@ -123,6 +124,7 @@ export class Bar {
     }
 
     set fuel_set(fuel: number) {
+        this.fuel_percentage.data = (fuel / 500000 * 100).toFixed(0);
         if (fuel >= 1000) {
             this.fuel.data = Math.floor((fuel / 1000)).toFixed(0);
             this.fuel.unit = " kg";

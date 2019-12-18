@@ -105,11 +105,7 @@ export class PaperMap extends StarMap {
 
     to_star(star: System): boolean {
         if (!this.on_planet && this.current_system != star) {
-            if (star.star.known) {
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         if (this.on_planet && star == this.current_system) {
@@ -121,11 +117,11 @@ export class PaperMap extends StarMap {
 
     }
 
-    update_knowns(star: System, dist_scale: number): boolean {
+    update_knowns(star: System, dist_scale: number, alcub_max: number): boolean {
         if (star.star.known) {
             return true;
         }
-        if (dist_scale * Math.sqrt((star.location.x - this.current_system.location.x) ** 2 + (star.location.y - this.current_system.location.y) ** 2) < 80) {
+        if (dist_scale * Math.sqrt((star.location.x - this.current_system.location.x) ** 2 + (star.location.y - this.current_system.location.y) ** 2) < alcub_max) {
             star.star.known = true;
             return true
         }
@@ -193,6 +189,7 @@ export class PaperMap extends StarMap {
         let sq5 = new Path.Circle(loc, 12.5);
         let sq6 = new Path.Circle(loc, 12.5);
         let sq7 = new Path.Circle(loc, 7);
+        let alcub_max = 60;
         let sq8 = new Path.RegularPolygon(loc, 4, 148);
         let sq9 = new Path.RegularPolygon(loc, 4, 148);
         let sq10 = new Path.Circle(loc, 7);
@@ -221,7 +218,7 @@ export class PaperMap extends StarMap {
         let temp_sun = false;
         let trace_visibility = true;
         let mouseenter = () => {
-            if (!this.update_knowns(star, dist_scale)) {
+            if (!this.update_knowns(star, dist_scale, alcub_max)) {
                 this.distance = dist_scale * Math.sqrt((this.current_system.location.x - star.location.x) ** 2 + (this.current_system.location.y - star.location.y) ** 2)
                 this.tooltip.text = `<span class="content">${star.star.name}</span>\n<span style="color: ${s_resource_color}">${s_resource_name}</span>-rich\n${this.distance.toFixed(2)} light years away\nno data`;
                 this.tooltip.show();
@@ -754,6 +751,9 @@ export class PaperMap extends StarMap {
             }
             if (on_planet && (this.distance * fuel_scale) > this.fuel) {
                 return;
+            }
+            if (dist_scale * Math.sqrt((star.location.x - this.current_system.location.x) ** 2 + (star.location.y - this.current_system.location.y) ** 2) > alcub_max) {
+                return
             }
 
             incr = 5;
