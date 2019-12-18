@@ -95,7 +95,7 @@ export class PaperMap extends StarMap {
         this.bar = bar;
         this.ship = new Date('January 1, 5032 00:00:00');
         this.emathh = new Date('January 1, 5032 00:00:00');
-        this.fuel = 20000;
+        this.fuel = 500000;
         this.bar.fuel_set = this.fuel;
     }
 
@@ -164,7 +164,7 @@ export class PaperMap extends StarMap {
         let dist_scale = 1 / 20;
         let planet_dist_scale = 0.761035 * 2;
         let ion_scaler = 2;
-        let fuel_scale = 100000000;
+        let fuel_scale = 4000000000;
         let label = new PointText(new Point(loc.x!, loc.y! + 32.5));
         let circ = new Path.Circle(loc, 15);
         circ.strokeColor = new Color('#777');
