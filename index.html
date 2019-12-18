@@ -25,6 +25,7 @@
             --background-accent-2: #333;
             --fg: #777;
             --bg-text: #eee;
+            --fuel-p: 0%;
             --bg-text-accent: #aaa;
             --fg-accent: #555;
             --fg-text: #111;
@@ -109,9 +110,9 @@
         .progress {
             position: relative;
             border: 1px solid var(--fg-accent);
-            padding-left: 4px;
+            padding-left: 10px;
             margin-top: 3px;
-            padding-right: 4px;
+            padding-right: 10px;
             padding-top: 2px;
             padding-bottom: 2px;
         }
@@ -119,7 +120,7 @@
         .progress::after {
             content: '';
             display: block;
-            width: 30%;
+            width: var(--fuel-p);
             height: 100%;
             position: absolute;
             top: 0;
@@ -344,7 +345,7 @@
                 <div class="column">
                     <div class="progress field"
                         tooltip="percentage of fuel capacity, absolute mass\nused as fuel for ion engine">
-                        per cap <span class="n content" id="fuel_per">70</span>%: <span class="n content"
+                        fuel <span class="n content" id="fuel_per">70</span>%: <span class="n content"
                             id="fuel">20</span>
                         <span id="fuel_unit">kg</span></div>
                 </div>
