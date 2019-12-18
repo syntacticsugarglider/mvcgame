@@ -414,7 +414,7 @@ export class PaperMap extends StarMap {
 
             if (on_planet && this.current_system == star) {
                 this.distance = this.current_planet.orbit.radius * dist_scale / 60 / 24 / 365;
-                if (this.distance * fuel_scale >= 1000) fuel_text = Math.floor((this.distance * fuel_scale / 1000)).toFixed(2).concat(" kg");
+                if (this.distance * fuel_scale >= 1000) fuel_text = Math.floor((this.distance * fuel_scale / 1000)).toFixed(0).concat(" kg");
                 else fuel_text = (this.distance * fuel_scale).toFixed(2).concat(" g");
             }
             time = this.distance * 0.2127 * 365 * 24 * 3600 * 1000;

@@ -123,7 +123,7 @@ export class Bar {
 
     set fuel_set(fuel: number) {
         if (fuel >= 1000) {
-            this.fuel.data = Math.floor((fuel / 1000)).toFixed(2);
+            this.fuel.data = Math.floor((fuel / 1000)).toFixed(0);
             this.fuel.unit = " kg";
         }
         else {
